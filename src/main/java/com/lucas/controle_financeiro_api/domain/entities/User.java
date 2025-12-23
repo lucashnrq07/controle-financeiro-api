@@ -1,7 +1,6 @@
 package com.lucas.controle_financeiro_api.domain.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -17,13 +16,12 @@ public class User {
     @Id
     private Long id;
 
-    @NotBlank
+    @Column(nullable = false)
     private String name;
 
-    @NotBlank
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @NotBlank
+    @Column(nullable = false)
     private String password;
 }
