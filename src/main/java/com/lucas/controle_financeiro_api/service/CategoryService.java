@@ -6,21 +6,24 @@ import com.lucas.controle_financeiro_api.dto.CategoryDTO;
 import com.lucas.controle_financeiro_api.repositories.CategoryRepository;
 import com.lucas.controle_financeiro_api.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class CategoryService {
 
-    private final CategoryRepository repository;
-    private final UserRepository userRepository;
+    @Autowired
+    private CategoryRepository repository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     // CREATE PERSONALIZED CATEGORY
     public CategoryDTO createCategory(CategoryDTO data, Long userId) {
 
-        User user = userRepository.findById(userId)
+        User user = this.userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         Category category = new Category(
@@ -31,14 +34,14 @@ public class CategoryService {
                 false // isDefault
         );
 
-        repository.save(category);
+        this.repository.save(category);
         return CategoryDTO.fromEntity(category);
     }
 
     // LIST CATEGORIES (DEFAULT + USER)
     public List<CategoryDTO> listCategories(Long userId) {
 
-        List<Category> categories = repository.findByUserIdOrIsDefaultTrue(userId);
+        List<Category> categories = this.repository.findByUserIdOrIsDefaultTrue(userId);
 
         return categories.stream()
                 .map(CategoryDTO::fromEntity)
@@ -47,7 +50,7 @@ public class CategoryService {
 
     // FIND CATEGORY BY ID
     public CategoryDTO findById(Long id) {
-        Category category = repository.findById(id)
+        Category category = this.repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
 
         return CategoryDTO.fromEntity(category);
