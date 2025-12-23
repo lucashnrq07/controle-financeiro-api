@@ -98,9 +98,9 @@ public class MovementService {
         BigDecimal balance = BigDecimal.ZERO;
 
         for (Movement m : movements) {
-            if (m.getCategory().getType() == CategoryType.RECEITA) {
+            if (m.getCategory().getType() == CategoryType.ENTRADA) {
                 balance = balance.add(m.getAmount());
-            } else if (m.getCategory().getType() == CategoryType.DESPESA) {
+            } else if (m.getCategory().getType() == CategoryType.SAIDA) {
                 balance = balance.subtract(m.getAmount());
             }
         }

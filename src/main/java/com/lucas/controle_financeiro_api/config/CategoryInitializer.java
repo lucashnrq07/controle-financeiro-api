@@ -27,7 +27,7 @@ public class CategoryInitializer implements CommandLineRunner {
         categoryRepository.save(new Category(
                 null,
                 "Salário",
-                CategoryType.RECEITA,
+                CategoryType.ENTRADA,
                 null,
                 true
         ));
@@ -35,7 +35,7 @@ public class CategoryInitializer implements CommandLineRunner {
         categoryRepository.save(new Category(
                 null,
                 "Freelance",
-                CategoryType.RECEITA,
+                CategoryType.ENTRADA,
                 null,
                 true
         ));
@@ -43,7 +43,7 @@ public class CategoryInitializer implements CommandLineRunner {
         categoryRepository.save(new Category(
                 null,
                 "Investimentos",
-                CategoryType.RECEITA,
+                CategoryType.ENTRADA,
                 null,
                 true
         ));
@@ -52,7 +52,7 @@ public class CategoryInitializer implements CommandLineRunner {
         categoryRepository.save(new Category(
                 null,
                 "Aluguel",
-                CategoryType.DESPESA,
+                CategoryType.SAIDA,
                 null,
                 true
         ));
@@ -60,7 +60,7 @@ public class CategoryInitializer implements CommandLineRunner {
         categoryRepository.save(new Category(
                 null,
                 "Mercado",
-                CategoryType.DESPESA,
+                CategoryType.SAIDA,
                 null,
                 true
         ));
@@ -68,7 +68,7 @@ public class CategoryInitializer implements CommandLineRunner {
         categoryRepository.save(new Category(
                 null,
                 "Transporte",
-                CategoryType.DESPESA,
+                CategoryType.SAIDA,
                 null,
                 true
         ));
@@ -76,7 +76,7 @@ public class CategoryInitializer implements CommandLineRunner {
         categoryRepository.save(new Category(
                 null,
                 "Lazer",
-                CategoryType.DESPESA,
+                CategoryType.SAIDA,
                 null,
                 true
         ));
@@ -84,7 +84,7 @@ public class CategoryInitializer implements CommandLineRunner {
         categoryRepository.save(new Category(
                 null,
                 "Saúde",
-                CategoryType.DESPESA,
+                CategoryType.SAIDA,
                 null,
                 true
         ));

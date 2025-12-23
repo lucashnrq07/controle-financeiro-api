@@ -1,24 +1,44 @@
 package com.lucas.controle_financeiro_api.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lucas.controle_financeiro_api.domain.entities.Movement;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Schema(description = "DTO para atualização de movimentações financeiras")
 public record UpdateMovementDTO(
 
         @NotNull
         @Positive
+        @Schema(
+                description = "Valor da movimentação (sempre positivo)",
+                example = "150.75"
+        )
         BigDecimal amount,
 
         @NotNull
+        @JsonFormat(pattern = "dd/MM/yyyy")
+        @Schema(
+                description = "Data da movimentação",
+                example = "23/12/2025"
+        )
         LocalDate date,
 
+        @Schema(
+                description = "Descrição opcional da movimentação",
+                example = "Compra no supermercado"
+        )
         String description,
 
         @NotNull
+        @Schema(
+                description = "ID da categoria associada à movimentação",
+                example = "3"
+        )
         Long categoryId
 ) {
 

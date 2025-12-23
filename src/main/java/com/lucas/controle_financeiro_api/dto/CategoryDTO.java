@@ -2,22 +2,31 @@ package com.lucas.controle_financeiro_api.dto;
 
 import com.lucas.controle_financeiro_api.domain.entities.Category;
 import com.lucas.controle_financeiro_api.domain.enums.CategoryType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
+@Schema(description = "DTO para criação e retorno de categorias financeiras")
 public record CategoryDTO(
 
-   @NotNull
-   String name,
+        @NotNull
+        @Schema(
+                description = "Nome da categoria",
+                example = "Alimentação"
+        )
+        String name,
 
-   @NotNull
-   CategoryType type
+        @NotNull
+        @Schema(
+                description = "Tipo da categoria (ENTRADA ou SAIDA)",
+                example = "ENTRADA"
+        )
+        CategoryType type
 ) {
 
     public static CategoryDTO fromEntity(Category category) {
-        CategoryDTO dto = new CategoryDTO(
+        return new CategoryDTO(
                 category.getName(),
                 category.getType()
         );
-        return dto;
     }
 }

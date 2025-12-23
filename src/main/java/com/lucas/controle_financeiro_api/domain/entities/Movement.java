@@ -1,5 +1,6 @@
 package com.lucas.controle_financeiro_api.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
