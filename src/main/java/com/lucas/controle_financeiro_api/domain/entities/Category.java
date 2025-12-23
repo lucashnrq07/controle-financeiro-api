@@ -1,6 +1,5 @@
 package com.lucas.controle_financeiro_api.domain.entities;
 
-import com.lucas.controle_financeiro_api.domain.enums.CategoryName;
 import com.lucas.controle_financeiro_api.domain.enums.CategoryType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,11 +17,17 @@ public class Category {
     @Id
     private Long id;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private CategoryName name;
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CategoryType type;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(nullable = false)
+    private Boolean isDefault;
 }

@@ -14,32 +14,34 @@ import java.util.List;
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
-@Tag(name = "Category", description = "Gerenciamento de categorias de movimentações")
+@Tag(name = "Category", description = "Gerenciamento de categorias financeiras")
 public class CategoryController {
 
     private final CategoryService categoryService;
 
-    // CREATE CATEGORY
-    @Operation(summary = "Criar uma nova categoria")
-    @PostMapping
-    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO dto) {
-        CategoryDTO createdCategory = categoryService.createCategory(dto);
-        return ResponseEntity.status(201).body(createdCategory);
+    // CREATE PERSONALIZED CATEGORY
+    @Operation(summary = "Criar categoria personalizada do usuário")
+    @PostMapping("/user/{userId}")
+    public ResponseEntity<CategoryDTO> createCategory(
+            @PathVariable Long userId,
+            @RequestBody CategoryDTO dto
+    ) {
+        CategoryDTO created = categoryService.createCategory(dto, userId);
+        return ResponseEntity.status(201).body(created);
     }
 
-    // LIST ALL CATEGORIES
-    @Operation(summary = "Listar todas as categorias")
-    @GetMapping
-    public ResponseEntity<List<Category>> listAllCategories() {
-        List<Category> categories = categoryService.listAllCategories();
-        return ResponseEntity.ok(categories);
+    // LIST CATEGORIES (DEFAULT + USER)
+    @Operation(summary = "Listar categorias disponíveis para o usuário")
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<CategoryDTO>> listCategories(@PathVariable Long userId) {
+        return ResponseEntity.ok(categoryService.listCategories(userId));
     }
 
     // FIND CATEGORY BY ID
-    @Operation(summary = "Buscar categoria pelo ID")
+    @Operation(summary = "Buscar categoria por ID")
     @GetMapping("/{id}")
-    public ResponseEntity<Category> findCategoryById(@PathVariable Long id) {
-        Category category = categoryService.findCategoryById(id);
-        return ResponseEntity.ok(category);
+    public ResponseEntity<CategoryDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(categoryService.findById(id));
     }
 }
+
