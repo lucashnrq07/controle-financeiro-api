@@ -28,9 +28,6 @@ public class MovementService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private UserService userService;
-
     // CREATE NEW MOVEMENT
     public MovementDTO createMovement(MovementDTO data) {
         Category category = this.categoryRepository.findById(data.categoryId())
@@ -38,16 +35,19 @@ public class MovementService {
         User user = this.userRepository.findById(data.userId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        Movement newMovement = this.repository.save(new Movement(null, data.amount(), data.date(), data.description(), category, user));
-        return new MovementDTO(data.amount(), data.date(), data.description(), data.categoryId(), data.userId());
+        Movement movement = this.repository.save(
+                new Movement(null, data.amount(), data.date(), data.description(), category, user)
+        );
+
+        return MovementDTO.fromEntity(movement);
     }
 
     // LIST ALL MOVEMENTS OF A USER
     public List<MovementDTO> listMovements(Long userId) {
-        User user = userRepository.findById(userId)
+        User user = this.userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<Movement> movements = repository.findByUserId(userId);
+        List<Movement> movements = this.repository.findByUserId(userId);
 
         return movements.stream()
                 .map(MovementDTO::fromEntity)
@@ -56,14 +56,11 @@ public class MovementService {
 
     // UPDATE MOVEMENT
     public MovementDTO updateMovement(Long movementId, UpdateMovementDTO dto) {
-        Movement movement = repository.findById(movementId)
+        Movement movement = this.repository.findById(movementId)
                 .orElseThrow(() -> new RuntimeException("Movement not found"));
 
         // update amount
         if (dto.amount() != null) {
-            if (dto.amount().compareTo(BigDecimal.ZERO) <= 0) {
-                throw new RuntimeException("The value must be greater than zero");
-            }
             movement.setAmount(dto.amount());
         }
 
@@ -79,21 +76,21 @@ public class MovementService {
 
         // update category
         if (dto.categoryId() != null) {
-            Category category = categoryRepository.findById(dto.categoryId())
+            Category category = this.categoryRepository.findById(dto.categoryId())
                     .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
             movement.setCategory(category);
         }
 
-        repository.save(movement);
+        this.repository.save(movement);
         return MovementDTO.fromEntity(movement);
     }
 
     // CALCULATE USER BALANCE
     public BigDecimal calculateUserBalance(Long userId) {
-        User user = userRepository.findById(userId)
+        User user = this.userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<Movement> movements = repository.findByUserId(userId);
+        List<Movement> movements = this.repository.findByUserId(userId);
 
         BigDecimal balance = BigDecimal.ZERO;
 
