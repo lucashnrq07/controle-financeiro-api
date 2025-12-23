@@ -42,12 +42,16 @@ public class CategoryService {
     // LIST CATEGORIES (DEFAULT + USER)
     public List<CategoryDTO> listCategories(Long userId) {
 
-        List<Category> categories = this.repository.findByUserIdOrIsDefaultTrue(userId);
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        List<Category> categories = repository.findByUserIdOrIsDefaultTrue(userId);
 
         return categories.stream()
                 .map(CategoryDTO::fromEntity)
                 .toList();
     }
+
 
     // FIND CATEGORY BY ID
     public CategoryDTO findById(Long id) {
