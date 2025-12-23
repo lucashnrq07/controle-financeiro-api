@@ -7,7 +7,7 @@ import com.lucas.controle_financeiro_api.domain.enums.CategoryType;
 import com.lucas.controle_financeiro_api.dto.MovementDTO;
 import com.lucas.controle_financeiro_api.dto.UpdateMovementDTO;
 import com.lucas.controle_financeiro_api.exceptions.CategoryNotFoundException;
-import com.lucas.controle_financeiro_api.exceptions.MovementNotFound;
+import com.lucas.controle_financeiro_api.exceptions.MovementNotFoundException;
 import com.lucas.controle_financeiro_api.exceptions.UserNotFoundException;
 import com.lucas.controle_financeiro_api.repositories.CategoryRepository;
 import com.lucas.controle_financeiro_api.repositories.MovementRepository;
@@ -60,7 +60,7 @@ public class MovementService {
     // UPDATE MOVEMENT
     public MovementDTO updateMovement(Long movementId, UpdateMovementDTO dto) {
         Movement movement = this.repository.findById(movementId)
-                .orElseThrow(() -> new MovementNotFound(movementId));
+                .orElseThrow(() -> new MovementNotFoundException(movementId));
 
         // update amount
         if (dto.amount() != null) {
