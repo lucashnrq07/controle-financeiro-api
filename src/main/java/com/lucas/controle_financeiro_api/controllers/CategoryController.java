@@ -1,7 +1,6 @@
 package com.lucas.controle_financeiro_api.controllers;
 
-import com.lucas.controle_financeiro_api.domain.entities.Category;
-import com.lucas.controle_financeiro_api.dto.category.CategoryDTO;
+import com.lucas.controle_financeiro_api.dto.CategoryDTO;
 import com.lucas.controle_financeiro_api.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

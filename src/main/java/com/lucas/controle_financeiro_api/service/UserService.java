@@ -1,7 +1,7 @@
 package com.lucas.controle_financeiro_api.service;
 
 import com.lucas.controle_financeiro_api.domain.entities.User;
-import com.lucas.controle_financeiro_api.dto.user.UserDTO;
+import com.lucas.controle_financeiro_api.dto.UserDTO;
 import com.lucas.controle_financeiro_api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

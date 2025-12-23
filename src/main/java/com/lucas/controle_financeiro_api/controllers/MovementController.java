@@ -1,7 +1,7 @@
 package com.lucas.controle_financeiro_api.controllers;
 
-import com.lucas.controle_financeiro_api.dto.movement.MovementDTO;
-import com.lucas.controle_financeiro_api.dto.movement.UpdateMovementDTO;
+import com.lucas.controle_financeiro_api.dto.MovementDTO;
+import com.lucas.controle_financeiro_api.dto.UpdateMovementDTO;
 import com.lucas.controle_financeiro_api.service.MovementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -1,4 +1,4 @@
-package com.lucas.controle_financeiro_api.dto.movement;
+package com.lucas.controle_financeiro_api.dto;
 
 import com.lucas.controle_financeiro_api.domain.entities.Movement;
 import jakarta.validation.constraints.NotNull;
@@ -22,13 +22,12 @@ public record UpdateMovementDTO(
         Long categoryId
 ) {
 
-    public static MovementDTO fromEntity(Movement movement) {
-        MovementDTO dto = new MovementDTO(movement.getAmount(),
+    public static UpdateMovementDTO fromEntity(Movement movement) {
+        return new UpdateMovementDTO(
+                movement.getAmount(),
                 movement.getDate(),
                 movement.getDescription(),
-                movement.getCategory().getId(),
-                movement.getUser().getId()
+                movement.getCategory().getId()
         );
-        return dto;
     }
 }

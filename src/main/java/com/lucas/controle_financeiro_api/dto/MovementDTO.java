@@ -1,7 +1,6 @@
-package com.lucas.controle_financeiro_api.dto.movement;
+package com.lucas.controle_financeiro_api.dto;
 
 import com.lucas.controle_financeiro_api.domain.entities.Movement;
-import com.lucas.controle_financeiro_api.domain.entities.User;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
