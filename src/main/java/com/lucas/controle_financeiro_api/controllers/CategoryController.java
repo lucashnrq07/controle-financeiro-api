@@ -22,10 +22,7 @@ public class CategoryController {
     // CREATE PERSONALIZED CATEGORY
     @Operation(summary = "Criar categoria personalizada do usuário")
     @PostMapping("/user/{userId}")
-    public ResponseEntity<CategoryDTO> createCategory(
-            @PathVariable Long userId,
-            @RequestBody CategoryDTO dto
-    ) {
+    public ResponseEntity<CategoryDTO> createCategory(@PathVariable Long userId, @RequestBody CategoryDTO dto) {
         CategoryDTO created = categoryService.createCategory(dto, userId);
         return ResponseEntity.status(201).body(created);
     }
