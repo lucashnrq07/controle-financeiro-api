@@ -15,15 +15,21 @@ public class CategoryService {
     @Autowired
     private CategoryRepository repository;
 
-    // CRIAR NOVA CATEGORIA
+    // CREATE NEW CATEGORY
     public CategoryDTO createCategory(CategoryDTO data) {
         Category newCategory = this.repository.save(new Category(null, data.name(), data.type()));
         return new CategoryDTO(data.name(), data.type());
     }
 
-    // LISTAR TODAS AS CATEGORIAS
+    // LIST ALL CATEGORIES
     public List<Category> listAllCategories() {
         List<Category> list = new ArrayList<>(this.repository.findAll());
         return list;
+    }
+
+    // FIND CATEGORY BY ID
+    public Category findCategoryById(Long id) {
+        return this.repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
     }
 }
