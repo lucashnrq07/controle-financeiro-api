@@ -3,9 +3,10 @@ package com.lucas.controle_financeiro_api.service;
 import com.lucas.controle_financeiro_api.domain.entities.Category;
 import com.lucas.controle_financeiro_api.domain.entities.User;
 import com.lucas.controle_financeiro_api.dto.CategoryDTO;
+import com.lucas.controle_financeiro_api.exceptions.CategoryNotFoundException;
+import com.lucas.controle_financeiro_api.exceptions.UserNotFoundException;
 import com.lucas.controle_financeiro_api.repositories.CategoryRepository;
 import com.lucas.controle_financeiro_api.repositories.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class CategoryService {
     public CategoryDTO createCategory(CategoryDTO data, Long userId) {
 
         User user = this.userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         Category category = new Category(
                 null,
@@ -51,7 +52,7 @@ public class CategoryService {
     // FIND CATEGORY BY ID
     public CategoryDTO findById(Long id) {
         Category category = this.repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException(id));
 
         return CategoryDTO.fromEntity(category);
     }

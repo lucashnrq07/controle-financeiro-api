@@ -6,6 +6,9 @@ import com.lucas.controle_financeiro_api.domain.entities.User;
 import com.lucas.controle_financeiro_api.domain.enums.CategoryType;
 import com.lucas.controle_financeiro_api.dto.MovementDTO;
 import com.lucas.controle_financeiro_api.dto.UpdateMovementDTO;
+import com.lucas.controle_financeiro_api.exceptions.CategoryNotFoundException;
+import com.lucas.controle_financeiro_api.exceptions.MovementNotFound;
+import com.lucas.controle_financeiro_api.exceptions.UserNotFoundException;
 import com.lucas.controle_financeiro_api.repositories.CategoryRepository;
 import com.lucas.controle_financeiro_api.repositories.MovementRepository;
 import com.lucas.controle_financeiro_api.repositories.UserRepository;
@@ -31,9 +34,9 @@ public class MovementService {
     // CREATE NEW MOVEMENT
     public MovementDTO createMovement(MovementDTO data) {
         Category category = this.categoryRepository.findById(data.categoryId())
-                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException(data.categoryId()));
         User user = this.userRepository.findById(data.userId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(data.userId()));
 
         Movement movement = this.repository.save(
                 new Movement(null, data.amount(), data.date(), data.description(), category, user)
@@ -45,7 +48,7 @@ public class MovementService {
     // LIST ALL MOVEMENTS OF A USER
     public List<MovementDTO> listMovements(Long userId) {
         User user = this.userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         List<Movement> movements = this.repository.findByUserId(userId);
 
@@ -57,7 +60,7 @@ public class MovementService {
     // UPDATE MOVEMENT
     public MovementDTO updateMovement(Long movementId, UpdateMovementDTO dto) {
         Movement movement = this.repository.findById(movementId)
-                .orElseThrow(() -> new RuntimeException("Movement not found"));
+                .orElseThrow(() -> new MovementNotFound(movementId));
 
         // update amount
         if (dto.amount() != null) {
@@ -77,7 +80,7 @@ public class MovementService {
         // update category
         if (dto.categoryId() != null) {
             Category category = this.categoryRepository.findById(dto.categoryId())
-                    .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+                    .orElseThrow(() -> new CategoryNotFoundException(movementId));
             movement.setCategory(category);
         }
 
@@ -88,7 +91,7 @@ public class MovementService {
     // CALCULATE USER BALANCE
     public BigDecimal calculateUserBalance(Long userId) {
         User user = this.userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         List<Movement> movements = this.repository.findByUserId(userId);
 

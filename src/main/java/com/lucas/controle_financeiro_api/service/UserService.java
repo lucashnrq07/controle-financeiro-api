@@ -3,6 +3,7 @@ package com.lucas.controle_financeiro_api.service;
 import com.lucas.controle_financeiro_api.domain.entities.User;
 import com.lucas.controle_financeiro_api.dto.UserDTO;
 import com.lucas.controle_financeiro_api.dto.UserResponseDTO;
+import com.lucas.controle_financeiro_api.exceptions.UserNotFoundException;
 import com.lucas.controle_financeiro_api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,6 @@ public class UserService {
     // FIND USER BY ID
     public User findUserById(Long id) {
         return this.repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 }
