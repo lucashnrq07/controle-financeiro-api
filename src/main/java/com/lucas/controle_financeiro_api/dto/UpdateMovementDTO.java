@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @Schema(description = "DTO para atualização de movimentações financeiras")
 public record UpdateMovementDTO(
 
-        @NotNull
         @Positive
         @Schema(
                 description = "Valor da movimentação (sempre positivo)",
@@ -20,7 +19,6 @@ public record UpdateMovementDTO(
         )
         BigDecimal amount,
 
-        @NotNull
         @JsonFormat(pattern = "dd/MM/yyyy")
         @Schema(
                 description = "Data da movimentação",
@@ -34,7 +32,6 @@ public record UpdateMovementDTO(
         )
         String description,
 
-        @NotNull
         @Schema(
                 description = "ID da categoria associada à movimentação",
                 example = "3"

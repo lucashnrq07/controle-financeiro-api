@@ -59,7 +59,7 @@ public class MovementController {
             @ApiResponse(responseCode = "404", description = "Movimentação não encontrada")
     })
     @PutMapping("/{movementId}")
-    public ResponseEntity<MovementDTO> updateMovement(@PathVariable Long movementId, @RequestBody @Valid UpdateMovementDTO dto) {
+    public ResponseEntity<MovementDTO> updateMovement(@PathVariable Long movementId, @RequestBody UpdateMovementDTO dto) {
         MovementDTO updatedMovement = movementService.updateMovement(movementId, dto);
         return ResponseEntity.ok(updatedMovement);
     }
