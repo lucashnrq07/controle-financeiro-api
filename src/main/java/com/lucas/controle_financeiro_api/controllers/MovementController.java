@@ -5,7 +5,9 @@ import com.lucas.controle_financeiro_api.dto.UpdateMovementDTO;
 import com.lucas.controle_financeiro_api.service.MovementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,16 +16,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/movements")
-@RequiredArgsConstructor
 @Tag(name = "Movement", description = "Gerenciamento de movimentações financeiras")
 public class MovementController {
 
-    private final MovementService movementService;
+    @Autowired
+    private MovementService movementService;
 
     // CREATE MOVEMENT
     @Operation(summary = "Criar uma nova movimentação")
     @PostMapping
-    public ResponseEntity<MovementDTO> createMovement(@RequestBody MovementDTO dto) {
+    public ResponseEntity<MovementDTO> createMovement(@RequestBody @Valid MovementDTO dto) {
         MovementDTO createdMovement = movementService.createMovement(dto);
         return ResponseEntity.status(201).body(createdMovement);
     }
@@ -39,10 +41,7 @@ public class MovementController {
     // UPDATE MOVEMENT
     @Operation(summary = "Atualizar uma movimentação")
     @PutMapping("/{movementId}")
-    public ResponseEntity<MovementDTO> updateMovement(
-            @PathVariable Long movementId,
-            @RequestBody UpdateMovementDTO dto) {
-
+    public ResponseEntity<MovementDTO> updateMovement(@PathVariable Long movementId,@RequestBody @Valid UpdateMovementDTO dto) {
         MovementDTO updatedMovement = movementService.updateMovement(movementId, dto);
         return ResponseEntity.ok(updatedMovement);
     }

@@ -5,6 +5,7 @@ import com.lucas.controle_financeiro_api.dto.UserResponseDTO;
 import com.lucas.controle_financeiro_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +24,7 @@ public class UserController {
     // CREATE USER
     @Operation(summary = "Criar um novo usuário")
     @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserDTO dto) {
+    public ResponseEntity<UserResponseDTO> createUser(@RequestBody @Valid UserDTO dto) {
         UserResponseDTO createdUser = userService.createUser(dto);
         return ResponseEntity.status(201).body(createdUser);
     }

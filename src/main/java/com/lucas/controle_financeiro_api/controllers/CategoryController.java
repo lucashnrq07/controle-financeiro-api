@@ -4,7 +4,8 @@ import com.lucas.controle_financeiro_api.dto.CategoryDTO;
 import com.lucas.controle_financeiro_api.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,16 +13,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
-@RequiredArgsConstructor
 @Tag(name = "Category", description = "Gerenciamento de categorias financeiras")
 public class CategoryController {
 
-    private final CategoryService categoryService;
+    @Autowired
+    private CategoryService categoryService;
 
     // CREATE PERSONALIZED CATEGORY
     @Operation(summary = "Criar categoria personalizada do usuário")
     @PostMapping("/user/{userId}")
-    public ResponseEntity<CategoryDTO> createCategory(@PathVariable Long userId, @RequestBody CategoryDTO dto) {
+    public ResponseEntity<CategoryDTO> createCategory(@PathVariable Long userId, @RequestBody @Valid CategoryDTO dto) {
         CategoryDTO created = categoryService.createCategory(dto, userId);
         return ResponseEntity.status(201).body(created);
     }
