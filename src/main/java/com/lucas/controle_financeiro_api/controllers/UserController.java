@@ -1,6 +1,7 @@
 package com.lucas.controle_financeiro_api.controllers;
 
 import com.lucas.controle_financeiro_api.dto.UserDTO;
+import com.lucas.controle_financeiro_api.dto.UserResponseDTO;
 import com.lucas.controle_financeiro_api.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,8 +23,8 @@ public class UserController {
     // CREATE USER
     @Operation(summary = "Criar um novo usuário")
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO dto) {
-        UserDTO createdUser = userService.createUser(dto);
+    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserDTO dto) {
+        UserResponseDTO createdUser = userService.createUser(dto);
         return ResponseEntity.status(201).body(createdUser);
     }
 }
