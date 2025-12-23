@@ -1,4 +1,4 @@
-package com.lucas.controle_financeiro_api.dto;
+package com.lucas.controle_financeiro_api.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 
