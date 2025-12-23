@@ -34,7 +34,7 @@ public class MovementService {
     public MovementDTO createMovement(MovementDTO data) {
         Category category = this.categoryRepository.findById(data.categoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
-        User user = this.userRepository.findById(data.categoryId())
+        User user = this.userRepository.findById(data.userId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         Movement newMovement = this.repository.save(new Movement(null, data.amount(), data.date(), data.description(), category, user));
@@ -92,7 +92,7 @@ public class MovementService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<Movement> movements = (List<Movement>) userService.findUserById(userId);
+        List<Movement> movements = repository.findByUserId(userId);
 
         BigDecimal balance = BigDecimal.ZERO;
 

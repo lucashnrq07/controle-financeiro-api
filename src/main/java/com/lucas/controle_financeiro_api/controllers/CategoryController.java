@@ -1,4 +1,4 @@
-package com.lucas.controle_financeiro_api.controller;
+package com.lucas.controle_financeiro_api.controllers;
 
 import com.lucas.controle_financeiro_api.domain.entities.Category;
 import com.lucas.controle_financeiro_api.dto.category.CategoryDTO;
