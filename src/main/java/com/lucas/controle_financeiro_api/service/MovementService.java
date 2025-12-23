@@ -5,6 +5,7 @@ import com.lucas.controle_financeiro_api.domain.entities.Movement;
 import com.lucas.controle_financeiro_api.domain.entities.User;
 import com.lucas.controle_financeiro_api.domain.enums.CategoryType;
 import com.lucas.controle_financeiro_api.dto.movement.MovementDTO;
+import com.lucas.controle_financeiro_api.dto.movement.UpdateMovementDTO;
 import com.lucas.controle_financeiro_api.repositories.CategoryRepository;
 import com.lucas.controle_financeiro_api.repositories.MovementRepository;
 import com.lucas.controle_financeiro_api.repositories.UserRepository;
@@ -54,7 +55,7 @@ public class MovementService {
     }
 
     // UPDATE MOVEMENT
-    public MovementDTO updateMovement(Long movementId, MovementDTO dto) {
+    public MovementDTO updateMovement(Long movementId, UpdateMovementDTO dto) {
         Movement movement = repository.findById(movementId)
                 .orElseThrow(() -> new RuntimeException("Movement not found"));
 

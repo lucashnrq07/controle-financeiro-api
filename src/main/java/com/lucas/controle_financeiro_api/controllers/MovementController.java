@@ -1,6 +1,7 @@
 package com.lucas.controle_financeiro_api.controllers;
 
 import com.lucas.controle_financeiro_api.dto.movement.MovementDTO;
+import com.lucas.controle_financeiro_api.dto.movement.UpdateMovementDTO;
 import com.lucas.controle_financeiro_api.service.MovementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,7 +41,7 @@ public class MovementController {
     @PutMapping("/{movementId}")
     public ResponseEntity<MovementDTO> updateMovement(
             @PathVariable Long movementId,
-            @RequestBody MovementDTO dto) {
+            @RequestBody UpdateMovementDTO dto) {
 
         MovementDTO updatedMovement = movementService.updateMovement(movementId, dto);
         return ResponseEntity.ok(updatedMovement);
