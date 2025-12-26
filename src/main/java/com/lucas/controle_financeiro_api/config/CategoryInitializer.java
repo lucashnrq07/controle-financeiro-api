@@ -34,14 +34,6 @@ public class CategoryInitializer implements CommandLineRunner {
 
         categoryRepository.save(new Category(
                 null,
-                "Freelance",
-                CategoryType.ENTRADA,
-                null,
-                true
-        ));
-
-        categoryRepository.save(new Category(
-                null,
                 "Investimentos",
                 CategoryType.ENTRADA,
                 null,
