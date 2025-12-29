@@ -7,9 +7,11 @@ import com.lucas.controle_financeiro_api.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
@@ -17,20 +19,14 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
     @Mock
     private UserRepository repository;
 
-    @Autowired
     @InjectMocks
     private UserService service;
-
-    @BeforeEach
-    void setup() {
-        MockitoAnnotations.initMocks(this);
-    }
-
 
     // ========== CREATE USER ==========
     @Test
@@ -48,9 +44,15 @@ class UserServiceTest {
     void findUserByIdSuccess() {
         User user = new User(1L, "Lucas", "lucas@gmail.com", "1234");
 
-        when(repository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(repository.findById(1L))
+                .thenReturn(Optional.of(user));
 
-        assertEquals("lucas@gmail.com", user.getEmail());
+        User result = service.findUserById(1L);
+
+        assertNotNull(result);
+        assertEquals("lucas@gmail.com", result.getEmail());
+
+        verify(repository).findById(1L);
     }
 
     @Test
