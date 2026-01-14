@@ -59,5 +59,16 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.findById(id));
     }
 
+    // DELETE CATEGORY BY ID
+    @Operation(summary = "Deletar uma categoria pelo ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Categoria deletada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Categoria não encontrada")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        this.categoryService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
 

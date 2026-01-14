@@ -77,4 +77,14 @@ public class MovementController {
         return ResponseEntity.ok(balance);
     }
 
+    @Operation(summary = "Deleta um movimento através do ID")
+    @ApiResponses ({
+            @ApiResponse(responseCode = "204", description = "Movimento deletado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Movimento não encontrado")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        this.movementService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

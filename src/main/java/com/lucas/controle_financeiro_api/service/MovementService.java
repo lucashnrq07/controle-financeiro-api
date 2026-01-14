@@ -107,4 +107,13 @@ public class MovementService {
 
         return balance;
     }
+
+    // DELETE MOVEMENT BY ID
+    public void delete(Long id) {
+        try {
+            this.repository.deleteById(id);
+        } catch (MovementNotFoundException e) {
+            throw new MovementNotFoundException(id);
+        }
+    }
 }

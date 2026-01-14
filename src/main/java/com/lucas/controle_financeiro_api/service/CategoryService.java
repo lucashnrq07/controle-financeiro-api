@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryService {
@@ -59,6 +60,15 @@ public class CategoryService {
                 .orElseThrow(() -> new CategoryNotFoundException(id));
 
         return CategoryDTO.fromEntity(category);
+    }
+
+    // DELETE CATEGORY
+    public void delete(Long id) {
+        try {
+            this.repository.deleteById(id);
+        } catch (CategoryNotFoundException e) {
+            throw new CategoryNotFoundException(id);
+        }
     }
 }
 

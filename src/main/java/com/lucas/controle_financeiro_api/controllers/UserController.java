@@ -10,10 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -34,5 +31,17 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> createUser(@RequestBody @Valid UserDTO dto) {
         UserResponseDTO createdUser = userService.createUser(dto);
         return ResponseEntity.status(201).body(createdUser);
+    }
+
+    // DELETE USER
+    @Operation(summary = "Deletar um usuário através do ID")
+    @ApiResponses ({
+            @ApiResponse(responseCode = "204", description = "Usuário deletado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        this.userService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

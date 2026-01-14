@@ -25,4 +25,13 @@ public class UserService {
         return this.repository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
+
+    // DELETE USER BY ID
+    public void delete(Long id) {
+        try {
+            this.repository.deleteById(id);
+        } catch (UserNotFoundException e) {
+            throw new UserNotFoundException(id);
+        }
+    }
 }
