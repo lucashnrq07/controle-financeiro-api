@@ -2,6 +2,7 @@ package com.lucas.controle_financeiro_api.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lucas.controle_financeiro_api.domain.entities.Movement;
+import com.lucas.controle_financeiro_api.domain.enums.CategoryType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -43,6 +44,20 @@ public record MovementDTO(
 
         @NotNull
         @Schema(
+                description = "Nome da categoria",
+                example = "Salário"
+        )
+        String categoryName,
+
+        @NotNull
+        @Schema(
+                description = "Tipo da categoria",
+                example = "Entrada"
+        )
+        CategoryType type,
+
+        @NotNull
+        @Schema(
                 description = "ID do usuário dono da movimentação",
                 example = "1"
         )
@@ -55,6 +70,8 @@ public record MovementDTO(
                 movement.getDate(),
                 movement.getDescription(),
                 movement.getCategory().getId(),
+                movement.getCategory().getName(),
+                movement.getCategory().getType(),
                 movement.getUser().getId()
         );
     }
