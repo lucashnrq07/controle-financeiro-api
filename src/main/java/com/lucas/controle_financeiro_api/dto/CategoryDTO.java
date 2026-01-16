@@ -7,6 +7,11 @@ import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "DTO para criação e retorno de categorias financeiras")
 public record CategoryDTO(
+        @Schema(
+                description = "Id da categoria",
+                example = "1"
+        )
+        Long id,
 
         @NotNull
         @Schema(
@@ -25,6 +30,7 @@ public record CategoryDTO(
 
     public static CategoryDTO fromEntity(Category category) {
         return new CategoryDTO(
+                category.getId(),
                 category.getName(),
                 category.getType()
         );
