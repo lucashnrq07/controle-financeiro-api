@@ -1,6 +1,7 @@
 package com.lucas.controle_financeiro_api.config;
 
 import com.lucas.controle_financeiro_api.domain.entities.Category;
+import com.lucas.controle_financeiro_api.domain.entities.User;
 import com.lucas.controle_financeiro_api.domain.enums.CategoryType;
 import com.lucas.controle_financeiro_api.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +16,10 @@ public class CategoryInitializer implements CommandLineRunner {
     @Autowired
     private CategoryRepository categoryRepository;
 
-
     @Override
     public void run(String... args) {
+
+        User user = new User(1L, "Lucas", "lucashsilvaa8@gmail.com", "Senha@123");
 
         if (categoryRepository.count() > 0) {
             return;
