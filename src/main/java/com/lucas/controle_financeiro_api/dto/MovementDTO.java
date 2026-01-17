@@ -13,6 +13,11 @@ import java.time.LocalDate;
 @Schema(description = "DTO para criação e retorno de movimentações financeiras")
 public record MovementDTO(
 
+        @Schema(
+                description = "ID da movimentação"
+        )
+        Long id,
+
         @NotNull
         @Positive
         @Schema(
@@ -42,14 +47,12 @@ public record MovementDTO(
         )
         Long categoryId,
 
-        @NotNull
         @Schema(
                 description = "Nome da categoria",
                 example = "Salário"
         )
         String categoryName,
 
-        @NotNull
         @Schema(
                 description = "Tipo da categoria",
                 example = "Entrada"
@@ -66,6 +69,7 @@ public record MovementDTO(
 
     public static MovementDTO fromEntity(Movement movement) {
         return new MovementDTO(
+                movement.getId(),
                 movement.getAmount(),
                 movement.getDate(),
                 movement.getDescription(),

@@ -1,5 +1,6 @@
 package com.lucas.controle_financeiro_api.controllers;
 
+import com.lucas.controle_financeiro_api.domain.entities.Movement;
 import com.lucas.controle_financeiro_api.dto.MovementDTO;
 import com.lucas.controle_financeiro_api.dto.UpdateMovementDTO;
 import com.lucas.controle_financeiro_api.service.MovementService;
@@ -87,4 +88,16 @@ public class MovementController {
         this.movementService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Busca uma movimentação através do ID")
+    @ApiResponses ({
+            @ApiResponse(responseCode = "200", description = "Movimento encontrado"),
+            @ApiResponse(responseCode = "404", description = "Movimento não encontrado")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<MovementDTO> findById(@PathVariable Long id) {
+        Movement movement = movementService.findById(id);
+        return ResponseEntity.ok(MovementDTO.fromEntity(movement));
+    }
+
 }

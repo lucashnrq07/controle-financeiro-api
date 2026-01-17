@@ -116,4 +116,10 @@ public class MovementService {
             throw new MovementNotFoundException(id);
         }
     }
+
+    public Movement findById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new MovementNotFoundException(id));
+    }
+
 }
