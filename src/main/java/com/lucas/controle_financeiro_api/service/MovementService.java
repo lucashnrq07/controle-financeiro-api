@@ -39,7 +39,7 @@ public class MovementService {
                 .orElseThrow(() -> new UserNotFoundException(data.userId()));
 
         Movement movement = this.repository.save(
-                new Movement(null, data.amount(), data.date(), data.description(), category, user)
+                new Movement(null, data.amount(), data.date(), data.description(), category, null, user)
         );
 
         return MovementDTO.fromEntity(movement);
@@ -121,5 +121,4 @@ public class MovementService {
         return repository.findById(id)
                 .orElseThrow(() -> new MovementNotFoundException(id));
     }
-
 }
