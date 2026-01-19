@@ -41,20 +41,23 @@ public class GoalController {
     }
 
     @DeleteMapping("/{goalId}")
-    public ResponseEntity<Void> deleteGoal(@PathVariable Long goalId) {
-        this.service.delete(goalId);
+    public ResponseEntity<Void> deleteGoal(
+            @PathVariable Long goalId,
+            @RequestParam Long userId
+    ) {
+        service.deleteGoal(goalId, userId);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{goalId}/deposit")
     public ResponseEntity<MovementDTO> deposit(@PathVariable Long goalId, @RequestBody GoalMovementDTO dto) {
-        MovementDTO updated = MovementDTO.fromEntity(service.depositIntoGoal(goalId, dto.amount(), dto.user().getId()));
+        MovementDTO updated = MovementDTO.fromEntity(service.depositIntoGoal(goalId, dto.amount(), dto.userID()));
         return ResponseEntity.ok(updated);
     }
 
     @PostMapping("/{goalId}/withdraw")
     public ResponseEntity<MovementDTO> withdraw(@PathVariable Long goalId, @RequestBody GoalMovementDTO dto) {
-        MovementDTO updated = MovementDTO.fromEntity(service.withdrawFromGoal(goalId, dto.amount(), dto.user().getId()));
+        MovementDTO updated = MovementDTO.fromEntity(service.withdrawFromGoal(goalId, dto.amount(), dto.userID()));
         return ResponseEntity.ok(updated);
     }
 }
