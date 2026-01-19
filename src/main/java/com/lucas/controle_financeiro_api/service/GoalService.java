@@ -5,7 +5,6 @@ import com.lucas.controle_financeiro_api.domain.entities.Goal;
 import com.lucas.controle_financeiro_api.domain.entities.Movement;
 import com.lucas.controle_financeiro_api.domain.entities.User;
 import com.lucas.controle_financeiro_api.dto.GoalDTO;
-import com.lucas.controle_financeiro_api.dto.MovementDTO;
 import com.lucas.controle_financeiro_api.exceptions.UserNotFoundException;
 import com.lucas.controle_financeiro_api.repositories.CategoryRepository;
 import com.lucas.controle_financeiro_api.repositories.GoalRepository;
@@ -22,6 +21,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class GoalService {
+
+    @Autowired
+    private MovementService movementService;
 
     @Autowired
     private UserRepository userRepository;
@@ -67,12 +69,20 @@ public class GoalService {
     }
 
     // DELETE GOAL
-    public void delete(Long id) {
-        try {
-            this.repository.deleteById(id);
-        } catch (RuntimeException e) {
-            throw new RuntimeException();
+    @Transactional
+    public void deleteGoal(Long goalId, Long userId) {
+
+        Goal goal = repository.findById(goalId)
+                .orElseThrow(() -> new RuntimeException("Meta não encontrada"));
+
+        movementRepository.deleteByGoalId(goalId);
+        BigDecimal current = goal.getCurrentAmount();
+
+        if (current.compareTo(BigDecimal.ZERO) > 0) {
+            withdrawFromGoal(goalId, current, userId);
         }
+
+        repository.delete(goal);
     }
 
     // DEPOSIT INTO GOAL
@@ -106,7 +116,7 @@ public class GoalService {
         return mov;
     }
 
-    // WITHDRAW FROM GOAL
+    // WITHDRAW INTO GOAL
     @Transactional
     public Movement withdrawFromGoal(Long goalId, BigDecimal amount, Long userId) {
         Goal goal = repository.findById(goalId)
@@ -115,27 +125,26 @@ public class GoalService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        // Categoria específica para retiradas de metas
         Category category = categoryRepository.findByName("RETIRADA DE META")
                 .orElseThrow(() -> new RuntimeException("Categoria RETIRADA DE META não encontrada"));
 
-        // Verificar se tem saldo na meta
+        // Verificar se há dinheiro suficiente
         if (goal.getCurrentAmount().compareTo(amount) < 0) {
             throw new RuntimeException("Saldo insuficiente na meta");
         }
 
-        // Criando o movement inverso (saída)
+        // Movement de ENTRADA do valor retirado
         Movement mov = new Movement();
-        mov.setAmount(amount.negate()); // negativo para representar retirada
+        mov.setAmount(amount);   // positivo, ENTRADA
         mov.setDate(LocalDate.now());
         mov.setDescription("Retirada da meta: " + goal.getName());
         mov.setUser(user);
         mov.setCategory(category);
-        mov.setGoal(goal);
+        mov.setGoal(null);
 
         movementRepository.save(mov);
 
-        // Atualiza valor atual
+        // Atualiza a meta
         goal.setCurrentAmount(goal.getCurrentAmount().subtract(amount));
         repository.save(goal);
 

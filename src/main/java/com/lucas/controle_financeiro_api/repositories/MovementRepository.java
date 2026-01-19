@@ -11,5 +11,5 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
 
     List<Movement> findByUserId(Long userId);
 
-    List<Movement> findByGoalId(Long goalId);
+    void deleteByGoalId(Long goalId);
 }

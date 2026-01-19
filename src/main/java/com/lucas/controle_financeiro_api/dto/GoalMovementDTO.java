@@ -11,7 +11,6 @@ public record GoalMovementDTO(
         @Positive
         BigDecimal amount,
 
-        @NotNull
-        User user
+        Long userID
 ) {}
 

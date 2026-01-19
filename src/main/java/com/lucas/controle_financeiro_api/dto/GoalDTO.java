@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 public record GoalDTO(
         @Schema(
-                description = "ID da movimentação"
+                description = "ID da meta"
         )
         Long id,
 
@@ -29,7 +29,6 @@ public record GoalDTO(
         )
         BigDecimal currentAmount,
 
-        @NotNull
         @Schema(
                 description = "Id do usuário dono da meta"
         )
