@@ -43,6 +43,7 @@ class CategoryServiceTest {
         user.setId(userId);
 
         CategoryDTO dto = new CategoryDTO(
+                null,
                 "Alimentação",
                 CategoryType.SAIDA
         );
@@ -69,6 +70,7 @@ class CategoryServiceTest {
         Long userId = 1L;
 
         CategoryDTO dto = new CategoryDTO(
+                null,
                 "Alimentação",
                 CategoryType.SAIDA
         );
