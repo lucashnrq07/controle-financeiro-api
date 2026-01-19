@@ -51,10 +51,13 @@ class MovementServiceTest {
         Category category = new Category(1L, "Salário", CategoryType.ENTRADA, user, false);
 
         MovementDTO dto = new MovementDTO(
+                null,
                 new BigDecimal("1000.00"),
                 LocalDate.now(),
                 "Pagamento",
                 category.getId(),
+                category.getName(),
+                category.getType(),
                 user.getId()
         );
 
@@ -82,10 +85,13 @@ class MovementServiceTest {
     void createMovementCategoryNotFound() {
 
         MovementDTO dto = new MovementDTO(
+                null,
                 new BigDecimal("100"),
                 LocalDate.now(),
                 "Teste",
                 1L,
+                null,
+                null,
                 1L
         );
 
@@ -108,10 +114,13 @@ class MovementServiceTest {
         Category category = new Category(1L, "Teste", CategoryType.ENTRADA, null, false);
 
         MovementDTO dto = new MovementDTO(
+                null,
                 new BigDecimal("100"),
                 LocalDate.now(),
                 "Teste",
                 1L,
+                category.getName(),
+                category.getType(),
                 1L
         );
 
@@ -139,7 +148,7 @@ class MovementServiceTest {
         Category entrada = new Category(1L, "Salário", CategoryType.ENTRADA, user, false);
 
         Movement m1 = new Movement(
-                1L, new BigDecimal("1000"), LocalDate.now(), "Salário", entrada, user
+                1L, new BigDecimal("1000"), LocalDate.now(), "Salário", entrada, null, user
         );
 
         when(userRepository.findById(1L))
@@ -184,6 +193,7 @@ class MovementServiceTest {
                 LocalDate.now(),
                 "Desc",
                 oldCategory,
+                null,
                 user
         );
 
@@ -229,8 +239,8 @@ class MovementServiceTest {
         Category entrada = new Category(1L, "Salário", CategoryType.ENTRADA, user, false);
         Category saida = new Category(2L, "Aluguel", CategoryType.SAIDA, user, false);
 
-        Movement m1 = new Movement(1L, new BigDecimal("1000"), LocalDate.now(), "Salário", entrada, user);
-        Movement m2 = new Movement(2L, new BigDecimal("400"), LocalDate.now(), "Aluguel", saida, user);
+        Movement m1 = new Movement(1L, new BigDecimal("1000"), LocalDate.now(), "Salário", entrada, null, user);
+        Movement m2 = new Movement(2L, new BigDecimal("400"), LocalDate.now(), "Aluguel", saida, null, user);
 
         when(userRepository.findById(1L))
                 .thenReturn(Optional.of(user));
