@@ -21,66 +21,22 @@ public class CategoryInitializer implements CommandLineRunner {
 
         User user = new User(1L, "Lucas", "lucashsilvaa8@gmail.com", "Senha@123");
 
-        if (categoryRepository.count() > 0) {
-            return;
+        criarCategoriaSeNaoExistir("Salário", CategoryType.ENTRADA);
+        criarCategoriaSeNaoExistir("Investimentos", CategoryType.ENTRADA);
+
+        criarCategoriaSeNaoExistir("Aluguel", CategoryType.SAIDA);
+        criarCategoriaSeNaoExistir("Mercado", CategoryType.SAIDA);
+        criarCategoriaSeNaoExistir("Transporte", CategoryType.SAIDA);
+        criarCategoriaSeNaoExistir("Lazer", CategoryType.SAIDA);
+        criarCategoriaSeNaoExistir("Saúde", CategoryType.SAIDA);
+
+        criarCategoriaSeNaoExistir("DEPÓSITO EM META", CategoryType.SAIDA);
+        criarCategoriaSeNaoExistir("RETIRADA DE META", CategoryType.ENTRADA);
+    }
+
+    private void criarCategoriaSeNaoExistir(String name, CategoryType type) {
+        if (!categoryRepository.existsByName(name)) {
+            categoryRepository.save(new Category(null, name, type, null, true));
         }
-
-        // RECEITAS
-        categoryRepository.save(new Category(
-                null,
-                "Salário",
-                CategoryType.ENTRADA,
-                null,
-                true
-        ));
-
-        categoryRepository.save(new Category(
-                null,
-                "Investimentos",
-                CategoryType.ENTRADA,
-                null,
-                true
-        ));
-
-        // DESPESAS
-        categoryRepository.save(new Category(
-                null,
-                "Aluguel",
-                CategoryType.SAIDA,
-                null,
-                true
-        ));
-
-        categoryRepository.save(new Category(
-                null,
-                "Mercado",
-                CategoryType.SAIDA,
-                null,
-                true
-        ));
-
-        categoryRepository.save(new Category(
-                null,
-                "Transporte",
-                CategoryType.SAIDA,
-                null,
-                true
-        ));
-
-        categoryRepository.save(new Category(
-                null,
-                "Lazer",
-                CategoryType.SAIDA,
-                null,
-                true
-        ));
-
-        categoryRepository.save(new Category(
-                null,
-                "Saúde",
-                CategoryType.SAIDA,
-                null,
-                true
-        ));
     }
 }
