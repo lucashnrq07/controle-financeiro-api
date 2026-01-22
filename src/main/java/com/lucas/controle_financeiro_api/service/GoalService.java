@@ -75,15 +75,20 @@ public class GoalService {
         Goal goal = repository.findById(goalId)
                 .orElseThrow(() -> new RuntimeException("Meta não encontrada"));
 
-        movementRepository.deleteByGoalId(goalId);
         BigDecimal current = goal.getCurrentAmount();
 
+        // 1️⃣ devolve o dinheiro ao saldo
         if (current.compareTo(BigDecimal.ZERO) > 0) {
             withdrawFromGoal(goalId, current, userId);
         }
 
+        // 2️⃣ desvincula os movements da meta
+        movementRepository.detachGoal(goalId);
+
+        // 3️⃣ agora sim pode deletar
         repository.delete(goal);
     }
+
 
     // DEPOSIT INTO GOAL
     @Transactional
