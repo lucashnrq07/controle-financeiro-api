@@ -43,16 +43,16 @@ public class GoalService {
                 .orElseThrow(() -> new UserNotFoundException(dto.userId()));
 
         Goal goal = this.repository.save(
-                new Goal(null, dto.name(), dto.desiredAmount(), new BigDecimal(String.valueOf(BigDecimal.ZERO)), user)
+                new Goal(null, dto.name(), dto.desiredAmount(), BigDecimal.ZERO, user)
         );
 
         return GoalDTO.fromEntity(goal);
     }
 
     // UPDATE GOAL
-    public GoalDTO updateGoal(Long id, GoalDTO dto){
-        Goal goal = this.repository.findById(id)
-                .orElseThrow(() -> new RuntimeException());
+    public GoalDTO updateGoal(Long goalId, GoalDTO dto){
+        Goal goal = repository.findByIdAndUserId(goalId, dto.userId())
+                .orElseThrow(() -> new RuntimeException("Meta não encontrada"));
 
         // update name
         if (dto.name() != null) {
@@ -72,28 +72,24 @@ public class GoalService {
     @Transactional
     public void deleteGoal(Long goalId, Long userId) {
 
-        Goal goal = repository.findById(goalId)
+        Goal goal = repository.findByIdAndUserId(goalId, userId)
                 .orElseThrow(() -> new RuntimeException("Meta não encontrada"));
 
         BigDecimal current = goal.getCurrentAmount();
 
-        // 1️⃣ devolve o dinheiro ao saldo
         if (current.compareTo(BigDecimal.ZERO) > 0) {
             withdrawFromGoal(goalId, current, userId);
         }
 
-        // 2️⃣ desvincula os movements da meta
         movementRepository.detachGoal(goalId);
 
-        // 3️⃣ agora sim pode deletar
         repository.delete(goal);
     }
-
 
     // DEPOSIT INTO GOAL
     @Transactional
     public Movement depositIntoGoal(Long goalId, BigDecimal amount, Long userId) {
-        Goal goal = repository.findById(goalId)
+        Goal goal = repository.findByIdAndUserId(goalId, userId)
                 .orElseThrow(() -> new RuntimeException("Meta não encontrada"));
 
         User user = userRepository.findById(userId)
@@ -102,6 +98,10 @@ public class GoalService {
         // Categoria específica para depósitos em metas
         Category category = categoryRepository.findByName("DEPÓSITO EM META")
                 .orElseThrow(() -> new RuntimeException("Categoria DEPÓSITO EM META não encontrada"));
+
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Valor deve ser maior que zero");
+        }
 
         // Criando o movement
         Movement mov = new Movement();
@@ -124,7 +124,7 @@ public class GoalService {
     // WITHDRAW INTO GOAL
     @Transactional
     public Movement withdrawFromGoal(Long goalId, BigDecimal amount, Long userId) {
-        Goal goal = repository.findById(goalId)
+        Goal goal = repository.findByIdAndUserId(goalId, userId)
                 .orElseThrow(() -> new RuntimeException("Meta não encontrada"));
 
         User user = userRepository.findById(userId)
@@ -136,6 +136,10 @@ public class GoalService {
         // Verificar se há dinheiro suficiente
         if (goal.getCurrentAmount().compareTo(amount) < 0) {
             throw new RuntimeException("Saldo insuficiente na meta");
+        }
+
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new RuntimeException("Valor deve ser maior que zero");
         }
 
         // Movement de ENTRADA do valor retirado
@@ -169,8 +173,8 @@ public class GoalService {
     }
 
     // FIND BY ID
-    public Goal findById(Long id) {
-        return repository.findById(id)
+    public Goal findById(Long goalId, Long userId) {
+        return repository.findByIdAndUserId(goalId, userId)
                 .orElseThrow(() -> new RuntimeException());
     }
 }
