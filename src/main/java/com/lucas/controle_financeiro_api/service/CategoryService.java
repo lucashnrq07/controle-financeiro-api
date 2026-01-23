@@ -2,7 +2,7 @@ package com.lucas.controle_financeiro_api.service;
 
 import com.lucas.controle_financeiro_api.domain.entities.Category;
 import com.lucas.controle_financeiro_api.domain.entities.User;
-import com.lucas.controle_financeiro_api.dto.CategoryDTO;
+import com.lucas.controle_financeiro_api.dto.category.CategoryDTO;
 import com.lucas.controle_financeiro_api.exceptions.CategoryNotFoundException;
 import com.lucas.controle_financeiro_api.exceptions.UserNotFoundException;
 import com.lucas.controle_financeiro_api.repositories.CategoryRepository;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CategoryService {

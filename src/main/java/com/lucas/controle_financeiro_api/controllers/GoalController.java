@@ -1,6 +1,10 @@
 package com.lucas.controle_financeiro_api.controllers;
 
-import com.lucas.controle_financeiro_api.dto.*;
+import com.lucas.controle_financeiro_api.dto.goal.CreateGoalDTO;
+import com.lucas.controle_financeiro_api.dto.goal.GoalMovementDTO;
+import com.lucas.controle_financeiro_api.dto.goal.GoalResponseDTO;
+import com.lucas.controle_financeiro_api.dto.goal.UpdateGoalDTO;
+import com.lucas.controle_financeiro_api.dto.movement.MovementResponseDTO;
 import com.lucas.controle_financeiro_api.service.GoalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

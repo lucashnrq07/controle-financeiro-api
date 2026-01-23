@@ -1,4 +1,4 @@
-package com.lucas.controle_financeiro_api.dto;
+package com.lucas.controle_financeiro_api.dto.movement;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lucas.controle_financeiro_api.domain.entities.Movement;

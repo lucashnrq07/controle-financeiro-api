@@ -4,9 +4,9 @@ import com.lucas.controle_financeiro_api.domain.entities.Category;
 import com.lucas.controle_financeiro_api.domain.entities.Movement;
 import com.lucas.controle_financeiro_api.domain.entities.User;
 import com.lucas.controle_financeiro_api.domain.enums.CategoryType;
-import com.lucas.controle_financeiro_api.dto.CreateMovementDTO;
-import com.lucas.controle_financeiro_api.dto.MovementResponseDTO;
-import com.lucas.controle_financeiro_api.dto.UpdateMovementDTO;
+import com.lucas.controle_financeiro_api.dto.movement.CreateMovementDTO;
+import com.lucas.controle_financeiro_api.dto.movement.MovementResponseDTO;
+import com.lucas.controle_financeiro_api.dto.movement.UpdateMovementDTO;
 import com.lucas.controle_financeiro_api.exceptions.CategoryNotFoundException;
 import com.lucas.controle_financeiro_api.exceptions.MovementNotFoundException;
 import com.lucas.controle_financeiro_api.exceptions.UserNotFoundException;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class MovementService {

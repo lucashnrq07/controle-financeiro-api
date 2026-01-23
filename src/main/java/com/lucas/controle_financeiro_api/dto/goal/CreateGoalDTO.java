@@ -1,6 +1,5 @@
-package com.lucas.controle_financeiro_api.dto;
+package com.lucas.controle_financeiro_api.dto.goal;
 
-import com.lucas.controle_financeiro_api.domain.entities.Goal;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;

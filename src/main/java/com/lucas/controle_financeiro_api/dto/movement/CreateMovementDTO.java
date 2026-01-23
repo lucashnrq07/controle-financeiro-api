@@ -1,4 +1,4 @@
-package com.lucas.controle_financeiro_api.dto;
+package com.lucas.controle_financeiro_api.dto.movement;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;

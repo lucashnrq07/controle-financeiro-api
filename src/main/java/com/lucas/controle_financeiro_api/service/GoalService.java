@@ -4,9 +4,9 @@ import com.lucas.controle_financeiro_api.domain.entities.Category;
 import com.lucas.controle_financeiro_api.domain.entities.Goal;
 import com.lucas.controle_financeiro_api.domain.entities.Movement;
 import com.lucas.controle_financeiro_api.domain.entities.User;
-import com.lucas.controle_financeiro_api.dto.CreateGoalDTO;
-import com.lucas.controle_financeiro_api.dto.GoalResponseDTO;
-import com.lucas.controle_financeiro_api.dto.UpdateGoalDTO;
+import com.lucas.controle_financeiro_api.dto.goal.CreateGoalDTO;
+import com.lucas.controle_financeiro_api.dto.goal.GoalResponseDTO;
+import com.lucas.controle_financeiro_api.dto.goal.UpdateGoalDTO;
 import com.lucas.controle_financeiro_api.exceptions.*;
 import com.lucas.controle_financeiro_api.repositories.CategoryRepository;
 import com.lucas.controle_financeiro_api.repositories.GoalRepository;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class GoalService {

@@ -1,9 +1,8 @@
-package com.lucas.controle_financeiro_api.dto;
+package com.lucas.controle_financeiro_api.dto.movement;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lucas.controle_financeiro_api.domain.entities.Movement;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
