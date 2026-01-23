@@ -34,6 +34,7 @@ public class CategoryService {
                 data.name(),
                 data.type(),
                 user,
+                false,
                 false
         );
 
@@ -48,7 +49,7 @@ public class CategoryService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        List<Category> categories = repository.findByUserIdOrIsDefaultTrue(userId);
+        List<Category> categories = repository.findVisibleCategories(userId);
 
         return categories.stream()
                 .map(CategoryResponseDTO::fromEntity)

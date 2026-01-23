@@ -30,4 +30,7 @@ public class Category {
 
     @Column(nullable = false)
     private Boolean isDefault;
+
+    @Column(name = "is_system", nullable = false)
+    private boolean system;
 }

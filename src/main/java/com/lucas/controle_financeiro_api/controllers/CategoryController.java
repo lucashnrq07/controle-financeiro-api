@@ -43,7 +43,6 @@ public class CategoryController {
         return ResponseEntity.created(location).body(created);
     }
 
-
     // LIST CATEGORIES (DEFAULT + USER)
     @Operation(summary = "Listar categorias disponíveis para o usuário (padrão + personalizadas)")
     @ApiResponses({
@@ -51,7 +50,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     })
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<CategoryResponseDTO>> listCategories(@PathVariable Long userId) {
+    public ResponseEntity<List<CategoryResponseDTO>> listarCategoriasVisiveis(@PathVariable Long userId) {
         return ResponseEntity.ok(categoryService.listCategories(userId));
     }
 
@@ -66,7 +65,6 @@ public class CategoryController {
     public ResponseEntity<CategoryResponseDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.findById(id));
     }
-
 
     // DELETE CATEGORY
     @Operation(summary = "Deletar uma categoria pelo ID")
