@@ -2,7 +2,8 @@ package com.lucas.controle_financeiro_api.controllers;
 
 import com.lucas.controle_financeiro_api.dto.GoalDTO;
 import com.lucas.controle_financeiro_api.dto.GoalMovementDTO;
-import com.lucas.controle_financeiro_api.dto.MovementDTO;
+import com.lucas.controle_financeiro_api.dto.CreateMovementDTO;
+import com.lucas.controle_financeiro_api.dto.MovementResponseDTO;
 import com.lucas.controle_financeiro_api.service.GoalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -78,13 +79,13 @@ public class GoalController {
     @Operation(summary = "Depositar dinheiro na meta")
     @ApiResponse(responseCode = "200", description = "Depósito realizado com sucesso")
     @PostMapping("/{goalId}/deposit")
-    public ResponseEntity<MovementDTO> deposit(
+    public ResponseEntity<MovementResponseDTO> deposit(
             @Parameter(description = "ID da meta", example = "1")
             @PathVariable Long goalId,
             @RequestBody @Valid GoalMovementDTO dto
     ) {
         return ResponseEntity.ok(
-                MovementDTO.fromEntity(
+                MovementResponseDTO.fromEntity(
                         service.depositIntoGoal(goalId, dto.amount(), dto.userId())
                 )
         );
@@ -94,13 +95,13 @@ public class GoalController {
     @Operation(summary = "Retirar dinheiro da meta")
     @ApiResponse(responseCode = "200", description = "Retirada realizada com sucesso")
     @PostMapping("/{goalId}/withdraw")
-    public ResponseEntity<MovementDTO> withdraw(
+    public ResponseEntity<MovementResponseDTO> withdraw(
             @Parameter(description = "ID da meta", example = "1")
             @PathVariable Long goalId,
             @RequestBody @Valid GoalMovementDTO dto
     ) {
         return ResponseEntity.ok(
-                MovementDTO.fromEntity(
+                MovementResponseDTO.fromEntity(
                         service.withdrawFromGoal(goalId, dto.amount(), dto.userId())
                 )
         );

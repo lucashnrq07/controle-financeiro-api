@@ -4,7 +4,8 @@ import com.lucas.controle_financeiro_api.domain.entities.Category;
 import com.lucas.controle_financeiro_api.domain.entities.Movement;
 import com.lucas.controle_financeiro_api.domain.entities.User;
 import com.lucas.controle_financeiro_api.domain.enums.CategoryType;
-import com.lucas.controle_financeiro_api.dto.MovementDTO;
+import com.lucas.controle_financeiro_api.dto.CreateMovementDTO;
+import com.lucas.controle_financeiro_api.dto.MovementResponseDTO;
 import com.lucas.controle_financeiro_api.dto.UpdateMovementDTO;
 import com.lucas.controle_financeiro_api.exceptions.CategoryNotFoundException;
 import com.lucas.controle_financeiro_api.exceptions.MovementNotFoundException;
@@ -31,61 +32,52 @@ public class MovementService {
     @Autowired
     private UserRepository userRepository;
 
-    // CREATE NEW MOVEMENT
-    public MovementDTO createMovement(MovementDTO data) {
-        Category category = this.categoryRepository.findById(data.categoryId())
+    // CREATE MOVEMENT
+    public MovementResponseDTO createMovement(CreateMovementDTO data) {
+
+        Category category = categoryRepository.findById(data.categoryId())
                 .orElseThrow(() -> new CategoryNotFoundException(data.categoryId()));
-        User user = this.userRepository.findById(data.userId())
+
+        User user = userRepository.findById(data.userId())
                 .orElseThrow(() -> new UserNotFoundException(data.userId()));
 
-        Movement movement = this.repository.save(
+        Movement movement = repository.save(
                 new Movement(null, data.amount(), data.date(), data.description(), category, null, user)
         );
 
-        return MovementDTO.fromEntity(movement);
+        return MovementResponseDTO.fromEntity(movement);
     }
 
-    // LIST ALL MOVEMENTS OF A USER
-    public List<MovementDTO> listMovements(Long userId) {
-        User user = this.userRepository.findById(userId)
+    // LIST MOVEMENTS
+    public List<MovementResponseDTO> listMovements(Long userId) {
+
+        userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        List<Movement> movements = this.repository.findByUserId(userId);
-
-        return movements.stream()
-                .map(MovementDTO::fromEntity)
-                .collect(Collectors.toList());
+        return repository.findByUserId(userId)
+                .stream()
+                .map(MovementResponseDTO::fromEntity)
+                .toList();
     }
 
-    // UPDATE MOVEMENT
-    public MovementDTO updateMovement(Long movementId, UpdateMovementDTO dto) {
-        Movement movement = this.repository.findById(movementId)
+    // UPDATE
+    public MovementResponseDTO updateMovement(Long movementId, UpdateMovementDTO dto) {
+
+        Movement movement = repository.findById(movementId)
                 .orElseThrow(() -> new MovementNotFoundException(movementId));
 
-        // update amount
-        if (dto.amount() != null) {
-            movement.setAmount(dto.amount());
-        }
+        if (dto.amount() != null) movement.setAmount(dto.amount());
+        if (dto.date() != null) movement.setDate(dto.date());
+        if (dto.description() != null) movement.setDescription(dto.description());
 
-        // update date
-        if (dto.date() != null) {
-            movement.setDate(dto.date());
-        }
-
-        // update description
-        if (dto.description() != null) {
-            movement.setDescription(dto.description());
-        }
-
-        // update category
         if (dto.categoryId() != null) {
-            Category category = this.categoryRepository.findById(dto.categoryId())
-                    .orElseThrow(() -> new CategoryNotFoundException(movementId));
+            Category category = categoryRepository.findById(dto.categoryId())
+                    .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId()));
             movement.setCategory(category);
         }
 
-        this.repository.save(movement);
-        return MovementDTO.fromEntity(movement);
+        repository.save(movement);
+        return MovementResponseDTO.fromEntity(movement);
     }
 
     // CALCULATE USER BALANCE
@@ -110,11 +102,10 @@ public class MovementService {
 
     // DELETE MOVEMENT BY ID
     public void delete(Long id) {
-        try {
-            this.repository.deleteById(id);
-        } catch (MovementNotFoundException e) {
+        if (!repository.existsById(id)) {
             throw new MovementNotFoundException(id);
         }
+        repository.deleteById(id);
     }
 
     public Movement findById(Long id) {
