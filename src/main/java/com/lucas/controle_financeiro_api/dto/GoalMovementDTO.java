@@ -1,16 +1,19 @@
 package com.lucas.controle_financeiro_api.dto;
 
-import com.lucas.controle_financeiro_api.domain.entities.User;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
 public record GoalMovementDTO(
+
         @NotNull
-        @Positive
+        @DecimalMin(value = "0.01", message = "Valor deve ser maior que zero")
+        @Schema(description = "Valor a ser depositado ou retirado da meta", example = "200.00")
         BigDecimal amount,
 
-        Long userID
+        @NotNull
+        @Schema(description = "ID do usuário que está realizando a operação", example = "3")
+        Long userId
 ) {}
-
