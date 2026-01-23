@@ -4,7 +4,9 @@ import com.lucas.controle_financeiro_api.domain.entities.Category;
 import com.lucas.controle_financeiro_api.domain.entities.Goal;
 import com.lucas.controle_financeiro_api.domain.entities.Movement;
 import com.lucas.controle_financeiro_api.domain.entities.User;
-import com.lucas.controle_financeiro_api.dto.GoalDTO;
+import com.lucas.controle_financeiro_api.dto.CreateGoalDTO;
+import com.lucas.controle_financeiro_api.dto.GoalResponseDTO;
+import com.lucas.controle_financeiro_api.dto.UpdateGoalDTO;
 import com.lucas.controle_financeiro_api.exceptions.*;
 import com.lucas.controle_financeiro_api.repositories.CategoryRepository;
 import com.lucas.controle_financeiro_api.repositories.GoalRepository;
@@ -22,88 +24,66 @@ import java.util.stream.Collectors;
 @Service
 public class GoalService {
 
-    @Autowired
-    private MovementService movementService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private GoalRepository repository;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
-    private MovementRepository movementRepository;
+    @Autowired private UserRepository userRepository;
+    @Autowired private GoalRepository repository;
+    @Autowired private CategoryRepository categoryRepository;
+    @Autowired private MovementRepository movementRepository;
 
     // CREATE GOAL
-    public GoalDTO createGoal(GoalDTO dto) {
-        User user = this.userRepository.findById(dto.userId())
-                .orElseThrow(() -> new UserNotFoundException(dto.userId()));
+    public GoalResponseDTO createGoal(Long userId, CreateGoalDTO dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
-        Goal goal = this.repository.save(
+        Goal goal = repository.save(
                 new Goal(null, dto.name(), dto.desiredAmount(), BigDecimal.ZERO, user)
         );
 
-        return GoalDTO.fromEntity(goal);
+        return GoalResponseDTO.fromEntity(goal);
     }
 
     // UPDATE GOAL
-    public GoalDTO updateGoal(Long goalId, GoalDTO dto){
-        Goal goal = repository.findByIdAndUserId(goalId, dto.userId())
+    public GoalResponseDTO updateGoal(Long goalId, Long userId, UpdateGoalDTO dto) {
+        Goal goal = repository.findByIdAndUserId(goalId, userId)
                 .orElseThrow(() -> new GoalNotFoundException(goalId));
 
-        // update name
-        if (dto.name() != null) {
-            goal.setName(dto.name());
-        }
+        goal.setName(dto.name());
+        goal.setDesiredAmount(dto.desiredAmount());
 
-        // update desired amount
-        if (dto.desiredAmount() != null) {
-            goal.setDesiredAmount(dto.desiredAmount());
-        }
-
-        this.repository.save(goal);
-        return GoalDTO.fromEntity(goal);
+        repository.save(goal);
+        return GoalResponseDTO.fromEntity(goal);
     }
 
     // DELETE GOAL
     @Transactional
     public void deleteGoal(Long goalId, Long userId) {
-
         Goal goal = repository.findByIdAndUserId(goalId, userId)
                 .orElseThrow(() -> new GoalNotFoundException(goalId));
 
-        BigDecimal current = goal.getCurrentAmount();
-
-        if (current.compareTo(BigDecimal.ZERO) > 0) {
-            withdrawFromGoal(goalId, current, userId);
+        if (goal.getCurrentAmount().compareTo(BigDecimal.ZERO) > 0) {
+            withdrawFromGoal(goalId, goal.getCurrentAmount(), userId);
         }
 
         movementRepository.detachGoal(goalId);
-
         repository.delete(goal);
     }
 
-    // DEPOSIT INTO GOAL
+    // DEPOSIT
     @Transactional
     public Movement depositIntoGoal(Long goalId, BigDecimal amount, Long userId) {
+
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidAmountException(amount);
+        }
+
         Goal goal = repository.findByIdAndUserId(goalId, userId)
                 .orElseThrow(() -> new GoalNotFoundException(goalId));
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        // Categoria específica para depósitos em metas
         Category category = categoryRepository.findByName("DEPÓSITO EM META")
                 .orElseThrow(() -> new CategoryNotFoundException("DEPÓSITO EM META"));
 
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new InvalidAmountException(amount);
-        }
-
-        // Criando o movement
         Movement mov = new Movement();
         mov.setAmount(amount);
         mov.setDate(LocalDate.now());
@@ -114,18 +94,26 @@ public class GoalService {
 
         movementRepository.save(mov);
 
-        // Atualiza o valor atual da meta
         goal.setCurrentAmount(goal.getCurrentAmount().add(amount));
         repository.save(goal);
 
         return mov;
     }
 
-    // WITHDRAW FROM GOAL
+    // WITHDRAW
     @Transactional
     public Movement withdrawFromGoal(Long goalId, BigDecimal amount, Long userId) {
+
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidAmountException(amount);
+        }
+
         Goal goal = repository.findByIdAndUserId(goalId, userId)
                 .orElseThrow(() -> new GoalNotFoundException(goalId));
+
+        if (goal.getCurrentAmount().compareTo(amount) < 0) {
+            throw new InsufficientGoalBalanceException(goalId, amount);
+        }
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
@@ -133,18 +121,8 @@ public class GoalService {
         Category category = categoryRepository.findByName("RETIRADA DE META")
                 .orElseThrow(() -> new CategoryNotFoundException("RETIRADA DE META"));
 
-        // Verificar se há dinheiro suficiente
-        if (goal.getCurrentAmount().compareTo(amount) < 0) {
-            throw new InsufficientGoalBalanceException(goalId, amount);
-        }
-
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new InvalidAmountException(amount);
-        }
-
-        // Movement de ENTRADA do valor retirado
         Movement mov = new Movement();
-        mov.setAmount(amount);   // positivo, ENTRADA
+        mov.setAmount(amount);
         mov.setDate(LocalDate.now());
         mov.setDescription("Retirada da meta: " + goal.getName());
         mov.setUser(user);
@@ -153,7 +131,6 @@ public class GoalService {
 
         movementRepository.save(mov);
 
-        // Atualiza a meta
         goal.setCurrentAmount(goal.getCurrentAmount().subtract(amount));
         repository.save(goal);
 
@@ -161,20 +138,22 @@ public class GoalService {
     }
 
     // LIST GOALS
-    public List<GoalDTO> goals(Long userId) {
-        User user = this.userRepository.findById(userId)
+    public List<GoalResponseDTO> listGoals(Long userId) {
+        userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        List<Goal> goals = this.repository.findAllByUserId(userId);
-
-        return goals.stream()
-                .map(GoalDTO::fromEntity)
-                .collect(Collectors.toList());
+        return repository.findAllByUserId(userId)
+                .stream()
+                .map(GoalResponseDTO::fromEntity)
+                .toList();
     }
 
-    // FIND BY ID
-    public Goal findById(Long goalId, Long userId) {
-        return repository.findByIdAndUserId(goalId, userId)
+    // FIND ONE
+    public GoalResponseDTO findById(Long goalId, Long userId) {
+        Goal goal = repository.findByIdAndUserId(goalId, userId)
                 .orElseThrow(() -> new GoalNotFoundException(goalId));
+
+        return GoalResponseDTO.fromEntity(goal);
     }
 }
+

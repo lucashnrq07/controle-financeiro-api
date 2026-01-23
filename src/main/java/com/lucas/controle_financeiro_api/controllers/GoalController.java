@@ -1,108 +1,111 @@
 package com.lucas.controle_financeiro_api.controllers;
 
-import com.lucas.controle_financeiro_api.dto.GoalDTO;
-import com.lucas.controle_financeiro_api.dto.GoalMovementDTO;
-import com.lucas.controle_financeiro_api.dto.CreateMovementDTO;
-import com.lucas.controle_financeiro_api.dto.MovementResponseDTO;
+import com.lucas.controle_financeiro_api.dto.*;
 import com.lucas.controle_financeiro_api.service.GoalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
-@RequestMapping("/goals")
+@RequestMapping("/users/{userId}/goals")
 @Tag(name = "Goals", description = "Operações relacionadas às metas financeiras do usuário")
 public class GoalController {
 
     private final GoalService service;
 
-    public GoalController(GoalService service) {
-        this.service = service;
-    }
-
-    // CREATE NEW GOAL
-    @Operation(summary = "Criar uma nova meta")
+    // CREATE GOAL
+    @Operation(summary = "Criar uma nova meta para o usuário")
     @ApiResponse(responseCode = "201", description = "Meta criada com sucesso")
     @PostMapping
-    public ResponseEntity<GoalDTO> createGoal(@RequestBody @Valid GoalDTO dto) {
-        GoalDTO createdGoal = service.createGoal(dto);
-
-        URI location = URI.create("/goals/" + createdGoal.id());
-        return ResponseEntity.created(location).body(createdGoal);
+    public ResponseEntity<GoalResponseDTO> createGoal(
+            @Parameter(description = "ID do usuário", example = "3")
+            @PathVariable Long userId,
+            @RequestBody @Valid CreateGoalDTO dto
+    ) {
+        GoalResponseDTO goal = service.createGoal(userId, dto);
+        return ResponseEntity.created(URI.create("/users/" + userId + "/goals/" + goal.id())).body(goal);
     }
 
-    // LIST ALL GOALS
-    @Operation(summary = "Listar metas do usuário")
+    // LIST GOALS
+    @Operation(summary = "Listar todas as metas do usuário")
     @ApiResponse(responseCode = "200", description = "Lista de metas retornada com sucesso")
     @GetMapping
-    public ResponseEntity<List<GoalDTO>> listGoals(
-            @Parameter(description = "ID do usuário", example = "1")
-            @RequestParam Long userId
+    public ResponseEntity<List<GoalResponseDTO>> listGoals(
+            @Parameter(description = "ID do usuário", example = "3")
+            @PathVariable Long userId
     ) {
-        return ResponseEntity.ok(service.goals(userId));
+        return ResponseEntity.ok(service.listGoals(userId));
     }
 
     // UPDATE GOAL
     @Operation(summary = "Atualizar uma meta")
     @ApiResponse(responseCode = "200", description = "Meta atualizada com sucesso")
     @PutMapping("/{goalId}")
-    public ResponseEntity<GoalDTO> updateGoal(
+    public ResponseEntity<GoalResponseDTO> updateGoal(
+            @Parameter(description = "ID do usuário", example = "3")
+            @PathVariable Long userId,
             @Parameter(description = "ID da meta", example = "1")
             @PathVariable Long goalId,
-            @RequestBody @Valid GoalDTO dto
+            @RequestBody @Valid UpdateGoalDTO dto
     ) {
-        return ResponseEntity.ok(service.updateGoal(goalId, dto));
+        return ResponseEntity.ok(service.updateGoal(goalId, userId, dto));
     }
 
     // DELETE GOAL
-    @Operation(summary = "Deletar uma meta")
+    @Operation(summary = "Remover uma meta")
     @ApiResponse(responseCode = "204", description = "Meta removida com sucesso")
     @DeleteMapping("/{goalId}")
     public ResponseEntity<Void> deleteGoal(
-            @Parameter(description = "ID da meta", example = "1")
-            @PathVariable Long goalId,
             @Parameter(description = "ID do usuário", example = "3")
-            @RequestParam Long userId
+            @PathVariable Long userId,
+            @Parameter(description = "ID da meta", example = "1")
+            @PathVariable Long goalId
     ) {
         service.deleteGoal(goalId, userId);
         return ResponseEntity.noContent().build();
     }
 
-    // DEPOSIT INTO A GOAL
-    @Operation(summary = "Depositar dinheiro na meta")
+    // DEPOSIT
+    @Operation(summary = "Depositar valor na meta")
     @ApiResponse(responseCode = "200", description = "Depósito realizado com sucesso")
     @PostMapping("/{goalId}/deposit")
     public ResponseEntity<MovementResponseDTO> deposit(
+            @Parameter(description = "ID do usuário", example = "3")
+            @PathVariable Long userId,
             @Parameter(description = "ID da meta", example = "1")
             @PathVariable Long goalId,
             @RequestBody @Valid GoalMovementDTO dto
     ) {
         return ResponseEntity.ok(
                 MovementResponseDTO.fromEntity(
-                        service.depositIntoGoal(goalId, dto.amount(), dto.userId())
+                        service.depositIntoGoal(goalId, dto.amount(), userId)
                 )
         );
     }
 
-    // WITHDRAW OF A GOAL
-    @Operation(summary = "Retirar dinheiro da meta")
+    // WITHDRAW
+    @Operation(summary = "Retirar valor da meta")
     @ApiResponse(responseCode = "200", description = "Retirada realizada com sucesso")
     @PostMapping("/{goalId}/withdraw")
     public ResponseEntity<MovementResponseDTO> withdraw(
+            @Parameter(description = "ID do usuário", example = "3")
+            @PathVariable Long userId,
             @Parameter(description = "ID da meta", example = "1")
             @PathVariable Long goalId,
             @RequestBody @Valid GoalMovementDTO dto
     ) {
         return ResponseEntity.ok(
                 MovementResponseDTO.fromEntity(
-                        service.withdrawFromGoal(goalId, dto.amount(), dto.userId())
+                        service.withdrawFromGoal(goalId, dto.amount(), userId)
                 )
         );
     }
