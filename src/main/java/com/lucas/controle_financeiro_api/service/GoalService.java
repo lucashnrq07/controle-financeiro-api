@@ -5,7 +5,7 @@ import com.lucas.controle_financeiro_api.domain.entities.Goal;
 import com.lucas.controle_financeiro_api.domain.entities.Movement;
 import com.lucas.controle_financeiro_api.domain.entities.User;
 import com.lucas.controle_financeiro_api.dto.GoalDTO;
-import com.lucas.controle_financeiro_api.exceptions.UserNotFoundException;
+import com.lucas.controle_financeiro_api.exceptions.*;
 import com.lucas.controle_financeiro_api.repositories.CategoryRepository;
 import com.lucas.controle_financeiro_api.repositories.GoalRepository;
 import com.lucas.controle_financeiro_api.repositories.MovementRepository;
@@ -52,7 +52,7 @@ public class GoalService {
     // UPDATE GOAL
     public GoalDTO updateGoal(Long goalId, GoalDTO dto){
         Goal goal = repository.findByIdAndUserId(goalId, dto.userId())
-                .orElseThrow(() -> new RuntimeException("Meta não encontrada"));
+                .orElseThrow(() -> new GoalNotFoundException(goalId));
 
         // update name
         if (dto.name() != null) {
@@ -73,7 +73,7 @@ public class GoalService {
     public void deleteGoal(Long goalId, Long userId) {
 
         Goal goal = repository.findByIdAndUserId(goalId, userId)
-                .orElseThrow(() -> new RuntimeException("Meta não encontrada"));
+                .orElseThrow(() -> new GoalNotFoundException(goalId));
 
         BigDecimal current = goal.getCurrentAmount();
 
@@ -90,17 +90,17 @@ public class GoalService {
     @Transactional
     public Movement depositIntoGoal(Long goalId, BigDecimal amount, Long userId) {
         Goal goal = repository.findByIdAndUserId(goalId, userId)
-                .orElseThrow(() -> new RuntimeException("Meta não encontrada"));
+                .orElseThrow(() -> new GoalNotFoundException(goalId));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         // Categoria específica para depósitos em metas
         Category category = categoryRepository.findByName("DEPÓSITO EM META")
-                .orElseThrow(() -> new RuntimeException("Categoria DEPÓSITO EM META não encontrada"));
+                .orElseThrow(() -> new CategoryNotFoundException("DEPÓSITO EM META"));
 
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new RuntimeException("Valor deve ser maior que zero");
+            throw new InvalidAmountException(amount);
         }
 
         // Criando o movement
@@ -121,25 +121,25 @@ public class GoalService {
         return mov;
     }
 
-    // WITHDRAW INTO GOAL
+    // WITHDRAW FROM GOAL
     @Transactional
     public Movement withdrawFromGoal(Long goalId, BigDecimal amount, Long userId) {
         Goal goal = repository.findByIdAndUserId(goalId, userId)
-                .orElseThrow(() -> new RuntimeException("Meta não encontrada"));
+                .orElseThrow(() -> new GoalNotFoundException(goalId));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         Category category = categoryRepository.findByName("RETIRADA DE META")
-                .orElseThrow(() -> new RuntimeException("Categoria RETIRADA DE META não encontrada"));
+                .orElseThrow(() -> new CategoryNotFoundException("RETIRADA DE META"));
 
         // Verificar se há dinheiro suficiente
         if (goal.getCurrentAmount().compareTo(amount) < 0) {
-            throw new RuntimeException("Saldo insuficiente na meta");
+            throw new InsufficientGoalBalanceException(goalId, amount);
         }
 
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new RuntimeException("Valor deve ser maior que zero");
+            throw new InvalidAmountException(amount);
         }
 
         // Movement de ENTRADA do valor retirado
@@ -163,7 +163,7 @@ public class GoalService {
     // LIST GOALS
     public List<GoalDTO> goals(Long userId) {
         User user = this.userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         List<Goal> goals = this.repository.findAllByUserId(userId);
 
@@ -175,6 +175,6 @@ public class GoalService {
     // FIND BY ID
     public Goal findById(Long goalId, Long userId) {
         return repository.findByIdAndUserId(goalId, userId)
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new GoalNotFoundException(goalId));
     }
 }
