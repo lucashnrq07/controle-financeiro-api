@@ -61,4 +61,42 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(GoalNotFoundException.class)
+    public ResponseEntity<StandardError> handleGoalNotFound(GoalNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(StandardError.notFound(ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidAmountException.class)
+    public ResponseEntity<StandardError> handleInvalidAmount(InvalidAmountException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new StandardError(
+                        Instant.now(),
+                        400,
+                        "Invalid amount",
+                        ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(InsufficientGoalBalanceException.class)
+    public ResponseEntity<StandardError> handleInsufficientBalance(InsufficientGoalBalanceException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new StandardError(
+                        Instant.now(),
+                        409,
+                        "Business rule violation",
+                        ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<StandardError> handleGeneric(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new StandardError(
+                        Instant.now(),
+                        500,
+                        "Unexpected error",
+                        "An unexpected error occurred"
+                ));
+    }
 }
