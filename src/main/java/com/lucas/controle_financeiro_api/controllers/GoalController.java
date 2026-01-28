@@ -78,7 +78,7 @@ public class GoalController {
             @Parameter(description = "ID da meta", example = "1")
             @PathVariable Long goalId
     ) {
-        service.deleteGoal(goalId, user.getId());
+        service.deleteGoal(goalId, user);
         return ResponseEntity.noContent().build();
     }
 
@@ -95,7 +95,7 @@ public class GoalController {
     ) {
         return ResponseEntity.ok(
                 MovementResponseDTO.fromEntity(
-                        service.depositIntoGoal(goalId, dto.amount(), user.getId())
+                        service.depositIntoGoal(goalId, dto.amount(), user)
                 )
         );
     }
@@ -113,7 +113,7 @@ public class GoalController {
     ) {
         return ResponseEntity.ok(
                 MovementResponseDTO.fromEntity(
-                        service.withdrawFromGoal(goalId, dto.amount(), user.getId())
+                        service.withdrawFromGoal(goalId, dto.amount(), user)
                 )
         );
     }

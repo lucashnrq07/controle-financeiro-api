@@ -55,12 +55,12 @@ public class GoalService {
 
     // DELETE GOAL
     @Transactional
-    public void deleteGoal(Long goalId, Long userId) {
-        Goal goal = repository.findByIdAndUserId(goalId, userId)
+    public void deleteGoal(Long goalId, User user) {
+        Goal goal = repository.findByIdAndUserId(goalId, user.getId())
                 .orElseThrow(() -> new GoalNotFoundException(goalId));
 
         if (goal.getCurrentAmount().compareTo(BigDecimal.ZERO) > 0) {
-            withdrawFromGoal(goalId, goal.getCurrentAmount(), userId);
+            withdrawFromGoal(goalId, goal.getCurrentAmount(), user);
         }
 
         movementRepository.detachGoal(goalId);
@@ -69,17 +69,14 @@ public class GoalService {
 
     // DEPOSIT
     @Transactional
-    public Movement depositIntoGoal(Long goalId, BigDecimal amount, Long userId) {
+    public Movement depositIntoGoal(Long goalId, BigDecimal amount, User user) {
 
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new InvalidAmountException(amount);
         }
 
-        Goal goal = repository.findByIdAndUserId(goalId, userId)
+        Goal goal = repository.findByIdAndUserId(goalId, user.getId())
                 .orElseThrow(() -> new GoalNotFoundException(goalId));
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
 
         Category category = categoryRepository.findByName("DEPÓSITO EM META")
                 .orElseThrow(() -> new CategoryNotFoundException("DEPÓSITO EM META"));
@@ -102,21 +99,18 @@ public class GoalService {
 
     // WITHDRAW
     @Transactional
-    public Movement withdrawFromGoal(Long goalId, BigDecimal amount, Long userId) {
+    public Movement withdrawFromGoal(Long goalId, BigDecimal amount, User user) {
 
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new InvalidAmountException(amount);
         }
 
-        Goal goal = repository.findByIdAndUserId(goalId, userId)
+        Goal goal = repository.findByIdAndUserId(goalId, user.getId())
                 .orElseThrow(() -> new GoalNotFoundException(goalId));
 
         if (goal.getCurrentAmount().compareTo(amount) < 0) {
             throw new InsufficientGoalBalanceException(goalId, amount);
         }
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
 
         Category category = categoryRepository.findByName("RETIRADA DE META")
                 .orElseThrow(() -> new CategoryNotFoundException("RETIRADA DE META"));
@@ -127,7 +121,7 @@ public class GoalService {
         mov.setDescription("Retirada da meta: " + goal.getName());
         mov.setUser(user);
         mov.setCategory(category);
-        mov.setGoal(null);
+        mov.setGoal(goal);
 
         movementRepository.save(mov);
 

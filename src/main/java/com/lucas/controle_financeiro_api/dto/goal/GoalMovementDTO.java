@@ -11,9 +11,5 @@ public record GoalMovementDTO(
         @NotNull
         @DecimalMin(value = "0.01", message = "Valor deve ser maior que zero")
         @Schema(description = "Valor a ser depositado ou retirado da meta", example = "200.00")
-        BigDecimal amount,
-
-        @NotNull
-        @Schema(description = "ID do usuário que está realizando a operação", example = "3")
-        Long userId
+        BigDecimal amount
 ) {}
