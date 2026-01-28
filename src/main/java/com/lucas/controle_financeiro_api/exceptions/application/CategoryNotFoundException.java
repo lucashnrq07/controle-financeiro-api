@@ -1,4 +1,4 @@
-package com.lucas.controle_financeiro_api.exceptions;
+package com.lucas.controle_financeiro_api.exceptions.application;
 
 public class CategoryNotFoundException extends RuntimeException {
 
