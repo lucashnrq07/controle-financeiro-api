@@ -25,9 +25,5 @@ public record CreateMovementDTO(
 
         @NotNull
         @Schema(description = "ID da categoria associada", example = "5")
-        Long categoryId,
-
-        @NotNull
-        @Schema(description = "ID do usuário dono da movimentação", example = "1")
-        Long userId
+        Long categoryId
 ) {}

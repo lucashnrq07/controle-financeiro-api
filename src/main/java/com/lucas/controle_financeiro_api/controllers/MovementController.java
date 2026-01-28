@@ -37,11 +37,12 @@ public class MovementController {
     })
     @PostMapping
     public ResponseEntity<MovementResponseDTO> createMovement(
-            @RequestBody @Valid CreateMovementDTO dto) {
+            @RequestBody @Valid CreateMovementDTO dto,
+            @AuthenticationPrincipal User user) {
 
-        MovementResponseDTO response = movementService.createMovement(dto);
-        return ResponseEntity.status(201).body(response);
+        return ResponseEntity.ok(movementService.createMovement(dto, user));
     }
+
 
     // LIST BY USER
     @Operation(summary = "Listar todas as movimentações de um usuário")
@@ -54,7 +55,7 @@ public class MovementController {
             @Parameter(description = "ID do usuário", example = "1")
             @AuthenticationPrincipal User user) {
 
-        return ResponseEntity.ok(movementService.listMovements(user.getId()));
+        return ResponseEntity.ok(movementService.listMovements(user));
     }
 
     // UPDATE
@@ -68,9 +69,10 @@ public class MovementController {
     public ResponseEntity<MovementResponseDTO> updateMovement(
             @Parameter(description = "ID da movimentação", example = "10")
             @PathVariable Long movementId,
-            @RequestBody UpdateMovementDTO dto) {
+            @RequestBody UpdateMovementDTO dto,
+            @AuthenticationPrincipal User user) {
 
-        return ResponseEntity.ok(movementService.updateMovement(movementId, dto));
+        return ResponseEntity.ok(movementService.updateMovement(movementId, dto, user));
     }
 
     // DELETE
@@ -82,9 +84,10 @@ public class MovementController {
     @DeleteMapping("/{movementId}")
     public ResponseEntity<Void> delete(
             @Parameter(description = "ID da movimentação", example = "10")
-            @PathVariable Long id) {
+            @PathVariable Long movementId,
+            @AuthenticationPrincipal User user) {
 
-        movementService.delete(id);
+        movementService.delete(movementId, user);
         return ResponseEntity.noContent().build();
     }
 
@@ -97,10 +100,11 @@ public class MovementController {
     @GetMapping("/{movementId}")
     public ResponseEntity<MovementResponseDTO> findById(
             @Parameter(description = "ID da movimentação", example = "10")
-            @PathVariable Long id) {
+            @PathVariable Long movementId,
+            @AuthenticationPrincipal User user) {
 
         return ResponseEntity.ok(
-                MovementResponseDTO.fromEntity(movementService.findById(id))
+                MovementResponseDTO.fromEntity(movementService.findById(movementId, user))
         );
     }
 }

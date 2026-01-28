@@ -32,51 +32,49 @@ public class MovementService {
     private UserRepository userRepository;
 
     // CREATE MOVEMENT
-    public MovementResponseDTO createMovement(CreateMovementDTO data) {
+    public MovementResponseDTO createMovement(CreateMovementDTO data, User user) {
 
         Category category = categoryRepository.findById(data.categoryId())
                 .orElseThrow(() -> new CategoryNotFoundException(data.categoryId()));
 
-        User user = userRepository.findById(data.userId())
-                .orElseThrow(() -> new UserNotFoundException(data.userId()));
+        Movement movement = new Movement();
+        movement.setAmount(data.amount());
+        movement.setDate(data.date());
+        movement.setDescription(data.description());
+        movement.setCategory(category);
+        movement.setUser(user);
 
-        Movement movement = repository.save(
-                new Movement(null, data.amount(), data.date(), data.description(), category, null, user)
-        );
+        repository.save(movement);
 
         return MovementResponseDTO.fromEntity(movement);
     }
 
     // LIST MOVEMENTS
-    public List<MovementResponseDTO> listMovements(Long userId) {
-
-        userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
-
-        return repository.findByUserId(userId)
+    public List<MovementResponseDTO> listMovements(User user) {
+        return repository.findByUser(user)
                 .stream()
                 .map(MovementResponseDTO::fromEntity)
                 .toList();
     }
 
     // UPDATE
-    public MovementResponseDTO updateMovement(Long movementId, UpdateMovementDTO dto) {
+    public MovementResponseDTO updateMovement(Long id, UpdateMovementDTO dto, User user) {
+        Movement movement = repository.findById(id)
+                .orElseThrow(() -> new MovementNotFoundException(id));
 
-        Movement movement = repository.findById(movementId)
-                .orElseThrow(() -> new MovementNotFoundException(movementId));
-
-        if (dto.amount() != null) movement.setAmount(dto.amount());
-        if (dto.date() != null) movement.setDate(dto.date());
-        if (dto.description() != null) movement.setDescription(dto.description());
-
-        if (dto.categoryId() != null) {
-            Category category = categoryRepository.findById(dto.categoryId())
-                    .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId()));
-            movement.setCategory(category);
+        if (!movement.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Access denied");
         }
 
-        repository.save(movement);
-        return MovementResponseDTO.fromEntity(movement);
+        Category category = categoryRepository.findById(dto.categoryId())
+                .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId()));
+
+        movement.setAmount(dto.amount());
+        movement.setDate(dto.date());
+        movement.setDescription(dto.description());
+        movement.setCategory(category);
+
+        return MovementResponseDTO.fromEntity(repository.save(movement));
     }
 
     // CALCULATE USER BALANCE
@@ -100,15 +98,26 @@ public class MovementService {
     }
 
     // DELETE MOVEMENT BY ID
-    public void delete(Long id) {
-        if (!repository.existsById(id)) {
-            throw new MovementNotFoundException(id);
+    public void delete(Long id, User user) {
+        Movement movement = repository.findById(id)
+                .orElseThrow(() -> new MovementNotFoundException(id));
+
+        if (!movement.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Access denied");
         }
-        repository.deleteById(id);
+
+        repository.delete(movement);
     }
 
-    public Movement findById(Long id) {
-        return repository.findById(id)
+    // FIND MOVEMENT BY ID
+    public Movement findById(Long id, User user) {
+        Movement movement = repository.findById(id)
                 .orElseThrow(() -> new MovementNotFoundException(id));
+
+        if (!movement.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Access denied");
+        }
+
+        return movement;
     }
 }
