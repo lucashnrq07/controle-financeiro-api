@@ -1,29 +1,31 @@
 package com.lucas.controle_financeiro_api.controllers;
 
+import com.lucas.controle_financeiro_api.domain.entities.User;
 import com.lucas.controle_financeiro_api.dto.category.CreateCategoryDTO;
 import com.lucas.controle_financeiro_api.dto.category.CategoryResponseDTO;
 import com.lucas.controle_financeiro_api.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
 
+@SecurityRequirement(name = "bearerAuth")
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/categories")
 @Tag(name = "Category", description = "Gerenciamento de categorias financeiras")
 public class CategoryController {
 
     private final CategoryService categoryService;
-
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
 
     // CREATE PERSONALIZED CATEGORY
     @Operation(summary = "Criar categoria personalizada do usuário")
@@ -34,10 +36,10 @@ public class CategoryController {
     })
     @PostMapping("/user/{userId}")
     public ResponseEntity<CategoryResponseDTO> createCategory(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @RequestBody @Valid CreateCategoryDTO dto
     ) {
-        CategoryResponseDTO created = categoryService.createCategory(dto, userId);
+        CategoryResponseDTO created = categoryService.createCategory(dto, user.getId());
 
         URI location = URI.create("/categories/" + created.id());
         return ResponseEntity.created(location).body(created);
@@ -49,11 +51,10 @@ public class CategoryController {
             @ApiResponse(responseCode = "200", description = "Lista de categorias retornada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     })
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<CategoryResponseDTO>> listarCategoriasVisiveis(@PathVariable Long userId) {
-        return ResponseEntity.ok(categoryService.listCategories(userId));
+    @GetMapping("/list")
+    public ResponseEntity<List<CategoryResponseDTO>> listarCategoriasVisiveis(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(categoryService.listCategories(user.getId()));
     }
-
 
     // FIND CATEGORY BY ID
     @Operation(summary = "Buscar categoria pelo ID")

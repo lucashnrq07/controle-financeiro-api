@@ -1,5 +1,6 @@
 package com.lucas.controle_financeiro_api.controllers;
 
+import com.lucas.controle_financeiro_api.domain.entities.User;
 import com.lucas.controle_financeiro_api.dto.goal.CreateGoalDTO;
 import com.lucas.controle_financeiro_api.dto.goal.GoalMovementDTO;
 import com.lucas.controle_financeiro_api.dto.goal.GoalResponseDTO;
@@ -9,18 +10,21 @@ import com.lucas.controle_financeiro_api.service.GoalService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
 
+@SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/users/{userId}/goals")
+@RequestMapping("/goals")
 @Tag(name = "Goals", description = "Operações relacionadas às metas financeiras do usuário")
 public class GoalController {
 
@@ -32,11 +36,11 @@ public class GoalController {
     @PostMapping
     public ResponseEntity<GoalResponseDTO> createGoal(
             @Parameter(description = "ID do usuário", example = "3")
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @RequestBody @Valid CreateGoalDTO dto
     ) {
-        GoalResponseDTO goal = service.createGoal(userId, dto);
-        return ResponseEntity.created(URI.create("/users/" + userId + "/goals/" + goal.id())).body(goal);
+        GoalResponseDTO goal = service.createGoal(user.getId(), dto);
+        return ResponseEntity.created(URI.create("/goals/" + goal.id())).body(goal);
     }
 
     // LIST GOALS
@@ -45,9 +49,9 @@ public class GoalController {
     @GetMapping
     public ResponseEntity<List<GoalResponseDTO>> listGoals(
             @Parameter(description = "ID do usuário", example = "3")
-            @PathVariable Long userId
+            @AuthenticationPrincipal User user
     ) {
-        return ResponseEntity.ok(service.listGoals(userId));
+        return ResponseEntity.ok(service.listGoals(user.getId()));
     }
 
     // UPDATE GOAL
@@ -56,12 +60,12 @@ public class GoalController {
     @PutMapping("/{goalId}")
     public ResponseEntity<GoalResponseDTO> updateGoal(
             @Parameter(description = "ID do usuário", example = "3")
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @Parameter(description = "ID da meta", example = "1")
             @PathVariable Long goalId,
             @RequestBody @Valid UpdateGoalDTO dto
     ) {
-        return ResponseEntity.ok(service.updateGoal(goalId, userId, dto));
+        return ResponseEntity.ok(service.updateGoal(goalId, user.getId(), dto));
     }
 
     // DELETE GOAL
@@ -70,11 +74,11 @@ public class GoalController {
     @DeleteMapping("/{goalId}")
     public ResponseEntity<Void> deleteGoal(
             @Parameter(description = "ID do usuário", example = "3")
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @Parameter(description = "ID da meta", example = "1")
             @PathVariable Long goalId
     ) {
-        service.deleteGoal(goalId, userId);
+        service.deleteGoal(goalId, user.getId());
         return ResponseEntity.noContent().build();
     }
 
@@ -84,14 +88,14 @@ public class GoalController {
     @PostMapping("/{goalId}/deposit")
     public ResponseEntity<MovementResponseDTO> deposit(
             @Parameter(description = "ID do usuário", example = "3")
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @Parameter(description = "ID da meta", example = "1")
             @PathVariable Long goalId,
             @RequestBody @Valid GoalMovementDTO dto
     ) {
         return ResponseEntity.ok(
                 MovementResponseDTO.fromEntity(
-                        service.depositIntoGoal(goalId, dto.amount(), userId)
+                        service.depositIntoGoal(goalId, dto.amount(), user.getId())
                 )
         );
     }
@@ -102,14 +106,14 @@ public class GoalController {
     @PostMapping("/{goalId}/withdraw")
     public ResponseEntity<MovementResponseDTO> withdraw(
             @Parameter(description = "ID do usuário", example = "3")
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User user,
             @Parameter(description = "ID da meta", example = "1")
             @PathVariable Long goalId,
             @RequestBody @Valid GoalMovementDTO dto
     ) {
         return ResponseEntity.ok(
                 MovementResponseDTO.fromEntity(
-                        service.withdrawFromGoal(goalId, dto.amount(), userId)
+                        service.withdrawFromGoal(goalId, dto.amount(), user.getId())
                 )
         );
     }
