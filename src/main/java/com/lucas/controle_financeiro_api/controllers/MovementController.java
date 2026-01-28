@@ -1,5 +1,6 @@
 package com.lucas.controle_financeiro_api.controllers;
 
+import com.lucas.controle_financeiro_api.domain.entities.User;
 import com.lucas.controle_financeiro_api.dto.movement.CreateMovementDTO;
 import com.lucas.controle_financeiro_api.dto.movement.MovementResponseDTO;
 import com.lucas.controle_financeiro_api.dto.movement.UpdateMovementDTO;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,12 +49,12 @@ public class MovementController {
             @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     })
-    @GetMapping("/user/{userId}")
+    @GetMapping
     public ResponseEntity<List<MovementResponseDTO>> listMovements(
             @Parameter(description = "ID do usuário", example = "1")
-            @PathVariable Long userId) {
+            @AuthenticationPrincipal User user) {
 
-        return ResponseEntity.ok(movementService.listMovements(userId));
+        return ResponseEntity.ok(movementService.listMovements(user.getId()));
     }
 
     // UPDATE
@@ -77,7 +79,7 @@ public class MovementController {
             @ApiResponse(responseCode = "204", description = "Movimentação deletada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Movimentação não encontrada")
     })
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{movementId}")
     public ResponseEntity<Void> delete(
             @Parameter(description = "ID da movimentação", example = "10")
             @PathVariable Long id) {
@@ -92,7 +94,7 @@ public class MovementController {
             @ApiResponse(responseCode = "200", description = "Movimentação encontrada"),
             @ApiResponse(responseCode = "404", description = "Movimentação não encontrada")
     })
-    @GetMapping("/{id}")
+    @GetMapping("/{movementId}")
     public ResponseEntity<MovementResponseDTO> findById(
             @Parameter(description = "ID da movimentação", example = "10")
             @PathVariable Long id) {

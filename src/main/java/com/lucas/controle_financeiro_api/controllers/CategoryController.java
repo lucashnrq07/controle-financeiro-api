@@ -34,7 +34,7 @@ public class CategoryController {
             @ApiResponse(responseCode = "400", description = "Dados inválidos"),
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     })
-    @PostMapping("/user/{userId}")
+    @PostMapping("/user")
     public ResponseEntity<CategoryResponseDTO> createCategory(
             @AuthenticationPrincipal User user,
             @RequestBody @Valid CreateCategoryDTO dto
