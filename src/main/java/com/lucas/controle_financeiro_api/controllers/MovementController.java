@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @SecurityRequirement(name = "bearerAuth")
@@ -106,4 +107,11 @@ public class MovementController {
                 MovementResponseDTO.fromEntity(movementService.findById(movementId, user))
         );
     }
+
+    @Operation(summary = "Calcular saldo de um usuário")
+    @GetMapping("/balance")
+    public BigDecimal balance(@AuthenticationPrincipal User user) {
+        return movementService.getUserBalance(user);
+    }
+
 }

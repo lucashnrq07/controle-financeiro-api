@@ -78,23 +78,8 @@ public class MovementService {
     }
 
     // CALCULATE USER BALANCE
-    public BigDecimal calculateUserBalance(Long userId) {
-        User user = this.userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
-
-        List<Movement> movements = this.repository.findByUserId(userId);
-
-        BigDecimal balance = BigDecimal.ZERO;
-
-        for (Movement m : movements) {
-            if (m.getCategory().getType() == CategoryType.ENTRADA) {
-                balance = balance.add(m.getAmount());
-            } else if (m.getCategory().getType() == CategoryType.SAIDA) {
-                balance = balance.subtract(m.getAmount());
-            }
-        }
-
-        return balance;
+    public BigDecimal getUserBalance(User user) {
+        return repository.calculateBalance(user.getId());
     }
 
     // DELETE MOVEMENT BY ID
