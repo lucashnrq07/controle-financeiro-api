@@ -106,6 +106,10 @@ public class MovementService {
             throw new RuntimeException("Access denied");
         }
 
+        if (movement.getGoal() != null) {
+            throw new RuntimeException("Movimentos de meta não podem ser excluídos. Use retirada ou exclua a meta.");
+        }
+
         repository.delete(movement);
     }
 
