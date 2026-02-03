@@ -2,6 +2,7 @@ package com.lucas.controle_financeiro_api.service;
 
 import com.lucas.controle_financeiro_api.domain.entities.Category;
 import com.lucas.controle_financeiro_api.domain.entities.Movement;
+import com.lucas.controle_financeiro_api.domain.entities.RecurringMovement;
 import com.lucas.controle_financeiro_api.domain.entities.User;
 import com.lucas.controle_financeiro_api.domain.enums.CategoryType;
 import com.lucas.controle_financeiro_api.dto.movement.CreateMovementDTO;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -109,4 +111,23 @@ public class MovementService {
 
         return movement;
     }
+
+    public void createAutomaticMovement(RecurringMovement r) {
+
+        if (!r.getActive()) return; // segurança extra
+
+        Movement movement = new Movement();
+
+        Category category = categoryRepository.findByName("TRANSAÇÃO AUTOMÁTICA")
+                .orElseThrow(() -> new CategoryNotFoundException("TRANSAÇÃO AUTOMÁTICA"));
+
+        movement.setDescription(r.getDescription());
+        movement.setAmount(r.getAmount());
+        movement.setDate(LocalDate.now()); // data da execução automática
+        movement.setCategory(category);
+        movement.setUser(r.getUser());
+
+        repository.save(movement);
+    }
+
 }

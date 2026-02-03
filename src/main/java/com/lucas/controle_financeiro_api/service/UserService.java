@@ -6,6 +6,8 @@ import com.lucas.controle_financeiro_api.dto.user.UserResponseDTO;
 import com.lucas.controle_financeiro_api.exceptions.login.UserNotFoundException;
 import com.lucas.controle_financeiro_api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,5 +35,21 @@ public class UserService {
         } catch (UserNotFoundException e) {
             throw new UserNotFoundException(id);
         }
+    }
+
+    // GET AUTHENTICATED USER
+    public User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new RuntimeException("Usuário não autenticado");
+        }
+
+        String email = authentication.getName(); // vem do token
+
+        return repository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
     }
 }

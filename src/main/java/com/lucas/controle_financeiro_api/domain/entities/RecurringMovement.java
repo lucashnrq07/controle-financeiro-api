@@ -3,11 +3,18 @@ package com.lucas.controle_financeiro_api.domain.entities;
 import com.lucas.controle_financeiro_api.domain.enums.CategoryType;
 import com.lucas.controle_financeiro_api.domain.enums.Frequency;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "movements")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(of = "id")
 public class RecurringMovement {
 
     @Id
@@ -17,8 +24,7 @@ public class RecurringMovement {
     private String description;
     private BigDecimal amount;
 
-    @Enumerated(EnumType.STRING)
-    private CategoryType type; // INCOME ou EXPENSE
+    private Category category; // INCOME ou EXPENSE
 
     @Enumerated(EnumType.STRING)
     private Frequency frequency; // MONTHLY | WEEKLY
