@@ -50,8 +50,8 @@ public class MovementService {
     }
 
     // LIST MOVEMENTS
-    public List<MovementResponseDTO> listMovements(User user) {
-        return repository.findByUser(user)
+    public List<MovementResponseDTO> listWithoutGoals(User user) {
+        return repository.findByUserIdAndGoalIsNull(user.getId())
                 .stream()
                 .map(MovementResponseDTO::fromEntity)
                 .toList();

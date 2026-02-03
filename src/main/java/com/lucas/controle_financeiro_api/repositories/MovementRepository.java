@@ -16,11 +16,11 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
 
     List<Movement> findByUserId(Long userId);
 
-    void deleteByGoalId(Long goalId);
-
     @Modifying
     @Query("UPDATE Movement m SET m.goal = null WHERE m.goal.id = :goalId")
     void detachGoal(@Param("goalId") Long goalId);
 
     List<Movement> findByUser(User user);
+
+    List<Movement> findByUserIdAndGoalIsNull(Long userId);
 }

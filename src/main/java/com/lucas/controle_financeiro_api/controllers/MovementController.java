@@ -43,7 +43,6 @@ public class MovementController {
         return ResponseEntity.ok(movementService.createMovement(dto, user));
     }
 
-
     // LIST BY USER
     @Operation(summary = "Listar todas as movimentações de um usuário")
     @ApiResponses({
@@ -55,7 +54,7 @@ public class MovementController {
             @Parameter(description = "ID do usuário", example = "1")
             @AuthenticationPrincipal User user) {
 
-        return ResponseEntity.ok(movementService.listMovements(user));
+        return ResponseEntity.ok(movementService.listWithoutGoals(user));
     }
 
     // UPDATE
