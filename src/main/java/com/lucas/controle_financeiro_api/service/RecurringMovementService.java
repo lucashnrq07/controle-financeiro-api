@@ -22,7 +22,7 @@ public class RecurringMovementService {
         RecurringMovement r = new RecurringMovement();
         r.setDescription(dto.description());
         r.setAmount(dto.amount());
-        r.setType(dto.type());
+        r.setCategory(dto.category());
         r.setFrequency(dto.frequency());
         r.setDayOfMonth(dto.dayOfMonth());
         r.setDayOfWeek(dto.dayOfWeek());
@@ -38,7 +38,7 @@ public class RecurringMovementService {
 
         return repo.findByUser(user).stream()
                 .map(r -> new RecurringDTO(
-                        r.getId(), r.getDescription(), r.getAmount(), r.getType(),
+                        r.getId(), r.getDescription(), r.getAmount(), r.getCategory(),
                         r.getFrequency(), r.getDayOfMonth(), r.getDayOfWeek(), r.getActive()))
                 .toList();
     }
