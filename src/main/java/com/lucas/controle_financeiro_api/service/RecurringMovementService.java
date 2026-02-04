@@ -18,12 +18,10 @@ import java.util.List;
 public class RecurringMovementService {
 
     private final RecurringMovementRepository repo;
-    private final UserService userService;
     private final CategoryRepository categoryRepository;
 
-    public RecurringResponseDTO create(CreateRecurringDTO dto) {
-
-        User user = userService.getAuthenticatedUser();
+    // CREATE
+    public RecurringResponseDTO create(CreateRecurringDTO dto, User user) {
 
         Category category = categoryRepository.findById(dto.categoryId())
                 .orElseThrow(() -> new CategoryNotFoundException(dto.categoryId()));
@@ -43,23 +41,38 @@ public class RecurringMovementService {
         return RecurringResponseDTO.fromEntity(r);
     }
 
-    public List<CreateRecurringDTO> list() {
-        User user = userService.getAuthenticatedUser();
-
-        return repo.findByUser(user).stream()
-                .map(r -> new CreateRecurringDTO(
-                        r.getDescription(), r.getAmount(), r.getCategory().getId(),
-                        r.getFrequency(), r.getDayOfMonth(), r.getDayOfWeek()))
+    // LIST
+    public List<RecurringResponseDTO> list(User user) {
+        return repo.findByUser(user)
+                .stream()
+                .map(RecurringResponseDTO::fromEntity)
                 .toList();
     }
 
-    public void toggle(User user) {
-        RecurringMovement r = repo.findById(user.getId()).orElseThrow();
+    // TOGGLE
+    public void toggle(Long recurringId, User user) {
+
+        RecurringMovement r = repo.findById(recurringId)
+                .orElseThrow(() -> new RuntimeException("Movimentação recorrente não encontrada"));
+
+        if (!r.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Acesso negado");
+        }
+
         r.setActive(!r.getActive());
         repo.save(r);
     }
 
-    public void delete(User user) {
-        repo.deleteById(user.getId());
+    // DELETE
+    public void delete(Long recurringId, User user) {
+
+        RecurringMovement r = repo.findById(recurringId)
+                .orElseThrow(() -> new RuntimeException("Movimentação recorrente não encontrada"));
+
+        if (!r.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Acesso negado");
+        }
+
+        repo.delete(r);
     }
 }
