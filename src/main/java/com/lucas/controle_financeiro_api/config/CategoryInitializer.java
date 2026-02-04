@@ -29,6 +29,8 @@ public class CategoryInitializer implements CommandLineRunner {
         // ===== CATEGORIAS INTERNAS DO SISTEMA =====
         criarCategoriaSeNaoExistir("DEPÓSITO EM META", CategoryType.SAIDA, true);
         criarCategoriaSeNaoExistir("RETIRADA DE META", CategoryType.ENTRADA, true);
+        criarCategoriaSeNaoExistir("DEPÓSITO AUTOMÁTICO", CategoryType.ENTRADA, true);
+        criarCategoriaSeNaoExistir("RETIRADA AUTOMÁTICA", CategoryType.SAIDA, true);
     }
 
     private void criarCategoriaSeNaoExistir(String name, CategoryType type, boolean system) {
