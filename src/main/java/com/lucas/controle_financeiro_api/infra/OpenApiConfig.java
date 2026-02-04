@@ -9,9 +9,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
-                title = "Login Auth API",
+                title = "Controle Financeiro",
                 version = "1.0",
-                description = "API de autenticação com JWT"
+                description = "API de acontrole financeiro"
         )
 )
 @SecurityScheme(
