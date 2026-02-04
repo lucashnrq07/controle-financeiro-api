@@ -1,7 +1,8 @@
 package com.lucas.controle_financeiro_api.controllers;
 
 import com.lucas.controle_financeiro_api.domain.entities.User;
-import com.lucas.controle_financeiro_api.dto.calendar.ReminderDTO;
+import com.lucas.controle_financeiro_api.dto.calendar.CreateReminderDTO;
+import com.lucas.controle_financeiro_api.dto.calendar.ReminderResponseDTO;
 import com.lucas.controle_financeiro_api.service.ReminderService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +20,12 @@ public class ReminderController {
     private final ReminderService service;
 
     @PostMapping
-    public ReminderDTO create(@RequestBody ReminderDTO dto, @AuthenticationPrincipal User user) {
+    public ReminderResponseDTO create(@RequestBody CreateReminderDTO dto, @AuthenticationPrincipal User user) {
         return service.create(dto);
     }
 
     @GetMapping
-    public List<ReminderDTO> list(@AuthenticationPrincipal User user) {
+    public List<CreateReminderDTO> list(@AuthenticationPrincipal User user) {
         return service.list();
     }
 

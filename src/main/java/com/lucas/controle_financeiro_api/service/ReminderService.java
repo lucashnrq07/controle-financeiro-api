@@ -2,7 +2,8 @@ package com.lucas.controle_financeiro_api.service;
 
 import com.lucas.controle_financeiro_api.domain.entities.Reminder;
 import com.lucas.controle_financeiro_api.domain.entities.User;
-import com.lucas.controle_financeiro_api.dto.calendar.ReminderDTO;
+import com.lucas.controle_financeiro_api.dto.calendar.CreateReminderDTO;
+import com.lucas.controle_financeiro_api.dto.calendar.ReminderResponseDTO;
 import com.lucas.controle_financeiro_api.repositories.ReminderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,8 @@ public class ReminderService {
     private final ReminderRepository repo;
     private final UserService userService;
 
-    public ReminderDTO create(ReminderDTO dto) {
+    public ReminderResponseDTO create(CreateReminderDTO dto) {
+
         User user = userService.getAuthenticatedUser();
 
         Reminder r = new Reminder();
@@ -27,14 +29,14 @@ public class ReminderService {
 
         repo.save(r);
 
-        return new ReminderDTO(r.getId(), r.getTitle(), r.getDescription(), r.getReminderDate());
+        return ReminderResponseDTO.fromEntity(r);
     }
 
-    public List<ReminderDTO> list() {
+    public List<CreateReminderDTO> list() {
         User user = userService.getAuthenticatedUser();
 
         return repo.findByUser(user).stream()
-                .map(r -> new ReminderDTO(r.getId(), r.getTitle(), r.getDescription(), r.getReminderDate()))
+                .map(r -> new CreateReminderDTO( r.getTitle(), r.getDescription(), r.getReminderDate()))
                 .toList();
     }
 
