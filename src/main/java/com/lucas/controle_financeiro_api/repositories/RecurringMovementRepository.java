@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface RecurringMovementRepository extends JpaRepository<RecurringMovement, Long> {
     List<RecurringMovement> findByUser(User user);
-    List<RecurringMovement> findByActiveTrue();
+
+    List<RecurringMovement> findAllByActiveTrue();
 }

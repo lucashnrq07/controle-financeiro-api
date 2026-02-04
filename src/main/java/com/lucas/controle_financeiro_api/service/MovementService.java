@@ -114,16 +114,20 @@ public class MovementService {
 
     public void createAutomaticMovement(RecurringMovement r) {
 
-        if (!r.getActive()) return; // segurança extra
+        if (!r.getActive()) return;
+
+        String categoryName =
+                r.getCategory().getType() == CategoryType.ENTRADA
+                        ? "DEPÓSITO AUTOMÁTICO"
+                        : "RETIRADA AUTOMÁTICA";
+
+        Category category = categoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new CategoryNotFoundException(categoryName));
 
         Movement movement = new Movement();
-
-        Category category = categoryRepository.findByName("TRANSAÇÃO AUTOMÁTICA")
-                .orElseThrow(() -> new CategoryNotFoundException("TRANSAÇÃO AUTOMÁTICA"));
-
         movement.setDescription(r.getDescription());
         movement.setAmount(r.getAmount());
-        movement.setDate(LocalDate.now()); // data da execução automática
+        movement.setDate(LocalDate.now());
         movement.setCategory(category);
         movement.setUser(r.getUser());
 

@@ -47,9 +47,12 @@ public class UserService {
             throw new RuntimeException("Usuário não autenticado");
         }
 
-        String email = authentication.getName(); // vem do token
+        Object principal = authentication.getPrincipal();
 
-        return repository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
+        if (principal instanceof User user) {
+            return user; // ✅ já é o usuário
+        }
+
+        throw new RuntimeException("Principal inválido");
     }
 }
