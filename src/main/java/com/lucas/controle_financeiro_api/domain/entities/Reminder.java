@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "movements")
+@Table(name = "reminders")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "movements")
+@Table(name = "recurring_movements")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
