@@ -38,8 +38,8 @@ public class ReminderService {
                 .toList();
     }
 
-    public void delete(Long id) {
-        repo.deleteById(id);
+    public void delete(User user) {
+        repo.deleteById(user.getId());
     }
 }
 

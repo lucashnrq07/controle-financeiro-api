@@ -43,13 +43,13 @@ public class RecurringMovementService {
                 .toList();
     }
 
-    public void toggle(Long id) {
-        RecurringMovement r = repo.findById(id).orElseThrow();
+    public void toggle(User user) {
+        RecurringMovement r = repo.findById(user.getId()).orElseThrow();
         r.setActive(!r.getActive());
         repo.save(r);
     }
 
-    public void delete(Long id) {
-        repo.deleteById(id);
+    public void delete(User user) {
+        repo.deleteById(user.getId());
     }
 }

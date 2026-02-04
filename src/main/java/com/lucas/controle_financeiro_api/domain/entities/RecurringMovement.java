@@ -24,7 +24,9 @@ public class RecurringMovement {
     private String description;
     private BigDecimal amount;
 
-    private Category category; // INCOME ou EXPENSE
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @Enumerated(EnumType.STRING)
     private Frequency frequency; // MONTHLY | WEEKLY

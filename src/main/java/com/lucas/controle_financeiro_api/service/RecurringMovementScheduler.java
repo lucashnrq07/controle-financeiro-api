@@ -1,47 +1,51 @@
 package com.lucas.controle_financeiro_api.service;
 
+import com.lucas.controle_financeiro_api.domain.entities.Category;
+import com.lucas.controle_financeiro_api.domain.entities.Movement;
 import com.lucas.controle_financeiro_api.domain.entities.RecurringMovement;
-import com.lucas.controle_financeiro_api.domain.enums.Frequency;
+import com.lucas.controle_financeiro_api.domain.enums.CategoryType;
+import com.lucas.controle_financeiro_api.exceptions.application.CategoryNotFoundException;
+import com.lucas.controle_financeiro_api.repositories.CategoryRepository;
+import com.lucas.controle_financeiro_api.repositories.MovementRepository;
 import com.lucas.controle_financeiro_api.repositories.RecurringMovementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class RecurringMovementScheduler {
 
-    private final RecurringMovementRepository repo;
+    private final RecurringMovementRepository repository;
     private final MovementService movementService;
+    private final CategoryRepository categoryRepository;
+    private final MovementRepository movementRepository;
 
     @Scheduled(cron = "0 0 2 * * ?")
-    public void processRecurringMovements() {
+    public void createAutomaticMovement(RecurringMovement r) {
 
-        LocalDate today = LocalDate.now();
-        int dayOfMonth = today.getDayOfMonth();
-        int dayOfWeek = today.getDayOfWeek().getValue();
+        if (!r.getActive()) return;
 
-        List<RecurringMovement> list = repo.findByActiveTrue();
+        String categoryName;
 
-        for (RecurringMovement r : list) {
-
-            boolean shouldGenerate = false;
-
-            if (r.getFrequency() == Frequency.MONTHLY && r.getDayOfMonth() == dayOfMonth)
-                shouldGenerate = true;
-
-            if (r.getFrequency() == Frequency.WEEKLY && r.getDayOfWeek() == dayOfWeek)
-                shouldGenerate = true;
-
-            if (shouldGenerate && (r.getLastGenerated() == null || !r.getLastGenerated().isEqual(today))) {
-
-                movementService.createAutomaticMovement(r);
-                r.setLastGenerated(today);
-                repo.save(r);
-            }
+        if (r.getCategory().equals(CategoryType.ENTRADA)) {
+            categoryName = "DEPÓSITO AUTOMÁTICO";
+        } else {
+            categoryName = "RETIRADA AUTOMÁTICA";
         }
+
+        Category category = categoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new CategoryNotFoundException(categoryName));
+
+        Movement movement = new Movement();
+        movement.setDescription(r.getDescription());
+        movement.setAmount(r.getAmount());
+        movement.setDate(LocalDate.now());
+        movement.setCategory(category);
+        movement.setUser(r.getUser());
+
+        movementRepository.save(movement);
     }
 }
