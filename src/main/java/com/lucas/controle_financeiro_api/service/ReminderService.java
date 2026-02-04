@@ -15,11 +15,8 @@ import java.util.List;
 public class ReminderService {
 
     private final ReminderRepository repo;
-    private final UserService userService;
 
-    public ReminderResponseDTO create(CreateReminderDTO dto) {
-
-        User user = userService.getAuthenticatedUser();
+    public ReminderResponseDTO create(CreateReminderDTO dto, User user) {
 
         Reminder r = new Reminder();
         r.setTitle(dto.title());
@@ -32,16 +29,16 @@ public class ReminderService {
         return ReminderResponseDTO.fromEntity(r);
     }
 
-    public List<CreateReminderDTO> list() {
-        User user = userService.getAuthenticatedUser();
-
+    public List<ReminderResponseDTO> list(User user) {
         return repo.findByUser(user).stream()
-                .map(r -> new CreateReminderDTO( r.getTitle(), r.getDescription(), r.getReminderDate()))
+                .map(ReminderResponseDTO::fromEntity)
                 .toList();
     }
 
-    public void delete(User user) {
-        repo.deleteById(user.getId());
+    public void delete(Long id, User user) {
+        Reminder reminder = repo.findByIdAndUser(id, user)
+                .orElseThrow(() -> new RuntimeException("Lembrete não encontrado"));
+
+        repo.delete(reminder);
     }
 }
-
