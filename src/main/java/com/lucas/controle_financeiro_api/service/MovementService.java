@@ -5,6 +5,7 @@ import com.lucas.controle_financeiro_api.domain.entities.Movement;
 import com.lucas.controle_financeiro_api.domain.entities.RecurringMovement;
 import com.lucas.controle_financeiro_api.domain.entities.User;
 import com.lucas.controle_financeiro_api.domain.enums.CategoryType;
+import com.lucas.controle_financeiro_api.domain.enums.MovementOrigin;
 import com.lucas.controle_financeiro_api.dto.movement.CreateMovementDTO;
 import com.lucas.controle_financeiro_api.dto.movement.MovementResponseDTO;
 import com.lucas.controle_financeiro_api.dto.movement.UpdateMovementDTO;
@@ -46,6 +47,8 @@ public class MovementService {
         movement.setDescription(data.description());
         movement.setCategory(category);
         movement.setUser(user);
+        movement.setOrigin(MovementOrigin.NORMAL);
+        movement.setGoal(null);
 
         repository.save(movement);
 
@@ -54,7 +57,7 @@ public class MovementService {
 
     // LIST MOVEMENTS
     public List<MovementResponseDTO> listWithoutGoals(User user) {
-        return repository.findByUserIdAndGoalIsNull(user.getId())
+        return repository.findByUserIdAndOrigin(user.getId(), MovementOrigin.NORMAL)
                 .stream()
                 .map(MovementResponseDTO::fromEntity)
                 .toList();
@@ -67,6 +70,10 @@ public class MovementService {
 
         if (!movement.getUser().getId().equals(user.getId())) {
             throw new RuntimeException("Access denied");
+        }
+
+        if (movement.getOrigin() == MovementOrigin.GOAL) {
+            throw new RuntimeException("Movimentos de meta não podem ser editados");
         }
 
         Category category = categoryRepository.findById(dto.categoryId())
@@ -94,7 +101,7 @@ public class MovementService {
             throw new RuntimeException("Access denied");
         }
 
-        if (movement.getGoal() != null) {
+        if (movement.getOrigin() == MovementOrigin.GOAL) {
             throw new RuntimeException("Movimentos de meta não podem ser excluídos. Use retirada ou exclua a meta.");
         }
 
@@ -121,7 +128,7 @@ public class MovementService {
                 .existsByRecurringMovementIdAndDate(r.getId(), today);
 
         if (alreadyExists) {
-            return; // já foi criada hoje
+            return;
         }
 
         Movement movement = new Movement();
@@ -131,6 +138,8 @@ public class MovementService {
         movement.setCategory(r.getCategory());
         movement.setUser(r.getUser());
         movement.setRecurringMovement(r);
+        movement.setOrigin(MovementOrigin.NORMAL);
+        movement.setGoal(null);
 
         repository.save(movement);
     }

@@ -1,5 +1,6 @@
 package com.lucas.controle_financeiro_api.domain.entities;
 
+import com.lucas.controle_financeiro_api.domain.enums.MovementOrigin;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,6 +35,10 @@ public class Movement {
     @ManyToOne
     @JoinColumn(name = "goal_id")
     private Goal goal;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
+    private MovementOrigin origin;
 
     @ManyToOne
     @JoinColumn(name = "recurring_movement_id")

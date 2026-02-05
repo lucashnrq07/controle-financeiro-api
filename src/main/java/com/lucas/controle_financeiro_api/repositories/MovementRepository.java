@@ -2,6 +2,7 @@ package com.lucas.controle_financeiro_api.repositories;
 
 import com.lucas.controle_financeiro_api.domain.entities.Movement;
 import com.lucas.controle_financeiro_api.domain.entities.User;
+import com.lucas.controle_financeiro_api.domain.enums.MovementOrigin;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -22,8 +23,6 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
     @Query("UPDATE Movement m SET m.goal = null WHERE m.goal.id = :goalId")
     void detachGoal(@Param("goalId") Long goalId);
 
-    List<Movement> findByUserIdAndGoalIsNull(Long userId);
-
     @Query("""
     SELECT COALESCE(SUM(
         CASE 
@@ -40,4 +39,6 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
     boolean existsByRecurringMovementIdAndDate(Long id, LocalDate today);
 
     List<Movement> findByGoalId(Long goalId);
+
+    List<Movement> findByUserIdAndOrigin(Long id, MovementOrigin movementOrigin);
 }
