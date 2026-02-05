@@ -4,6 +4,7 @@ import com.lucas.controle_financeiro_api.domain.entities.Category;
 import com.lucas.controle_financeiro_api.domain.entities.Goal;
 import com.lucas.controle_financeiro_api.domain.entities.Movement;
 import com.lucas.controle_financeiro_api.domain.entities.User;
+import com.lucas.controle_financeiro_api.domain.enums.MovementOrigin;
 import com.lucas.controle_financeiro_api.dto.goal.CreateGoalDTO;
 import com.lucas.controle_financeiro_api.dto.goal.GoalResponseDTO;
 import com.lucas.controle_financeiro_api.dto.goal.UpdateGoalDTO;
@@ -93,6 +94,7 @@ public class GoalService {
         mov.setUser(user);
         mov.setCategory(category);
         mov.setGoal(goal);
+        mov.setOrigin(MovementOrigin.GOAL);
 
         movementRepository.save(mov);
 
