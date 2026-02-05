@@ -35,6 +35,10 @@ public class Movement {
     @JoinColumn(name = "goal_id")
     private Goal goal;
 
+    @ManyToOne
+    @JoinColumn(name = "recurring_movement_id")
+    private RecurringMovement recurringMovement;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

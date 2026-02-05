@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -114,22 +115,22 @@ public class MovementService {
 
     public void createAutomaticMovement(RecurringMovement r) {
 
-        if (!r.getActive()) return;
+        LocalDate today = LocalDate.now(ZoneId.of("America/Sao_Paulo"));
 
-        String categoryName =
-                r.getCategory().getType() == CategoryType.ENTRADA
-                        ? "DEPÓSITO AUTOMÁTICO"
-                        : "RETIRADA AUTOMÁTICA";
+        boolean alreadyExists = repository
+                .existsByRecurringMovementIdAndDate(r.getId(), today);
 
-        Category category = categoryRepository.findByName(categoryName)
-                .orElseThrow(() -> new CategoryNotFoundException(categoryName));
+        if (alreadyExists) {
+            return; // já foi criada hoje
+        }
 
         Movement movement = new Movement();
         movement.setDescription(r.getDescription());
         movement.setAmount(r.getAmount());
-        movement.setDate(LocalDate.now());
-        movement.setCategory(category);
+        movement.setDate(today);
+        movement.setCategory(r.getCategory());
         movement.setUser(r.getUser());
+        movement.setRecurringMovement(r);
 
         repository.save(movement);
     }

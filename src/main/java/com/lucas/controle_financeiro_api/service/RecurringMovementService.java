@@ -3,6 +3,7 @@ package com.lucas.controle_financeiro_api.service;
 import com.lucas.controle_financeiro_api.domain.entities.Category;
 import com.lucas.controle_financeiro_api.domain.entities.RecurringMovement;
 import com.lucas.controle_financeiro_api.domain.entities.User;
+import com.lucas.controle_financeiro_api.domain.enums.Frequency;
 import com.lucas.controle_financeiro_api.dto.calendar.CreateRecurringDTO;
 import com.lucas.controle_financeiro_api.dto.calendar.RecurringResponseDTO;
 import com.lucas.controle_financeiro_api.exceptions.application.CategoryNotFoundException;
@@ -11,6 +12,8 @@ import com.lucas.controle_financeiro_api.repositories.RecurringMovementRepositor
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -19,6 +22,7 @@ public class RecurringMovementService {
 
     private final RecurringMovementRepository repo;
     private final CategoryRepository categoryRepository;
+    private final MovementService movementService;
 
     // CREATE
     public RecurringResponseDTO create(CreateRecurringDTO dto, User user) {
@@ -37,6 +41,25 @@ public class RecurringMovementService {
         r.setActive(true);
 
         repo.save(r);
+
+        LocalDate today = LocalDate.now(ZoneId.of("America/Sao_Paulo"));
+        boolean shouldRunNow = false;
+
+        if (r.getFrequency() == Frequency.MONTHLY &&
+                r.getDayOfMonth() != null &&
+                r.getDayOfMonth() == today.getDayOfMonth()) {
+            shouldRunNow = true;
+        }
+
+        if (r.getFrequency() == Frequency.WEEKLY &&
+                r.getDayOfWeek() != null &&
+                r.getDayOfWeek() == today.getDayOfWeek().getValue()) {
+            shouldRunNow = true;
+        }
+
+        if (shouldRunNow) {
+            movementService.createAutomaticMovement(r);
+        }
 
         return RecurringResponseDTO.fromEntity(r);
     }

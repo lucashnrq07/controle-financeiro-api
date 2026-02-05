@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,4 +37,5 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
     """)
     BigDecimal calculateBalance(Long userId);
 
+    boolean existsByRecurringMovementIdAndDate(Long id, LocalDate today);
 }
