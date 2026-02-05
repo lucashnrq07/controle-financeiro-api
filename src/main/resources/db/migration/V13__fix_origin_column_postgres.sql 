@@ -3,7 +3,7 @@ ADD COLUMN origin VARCHAR(10);
 
 UPDATE movements
 SET origin = 'GOAL'
-WHERE description LIKE '%meta%'
+WHERE description ILIKE '%meta%'
    OR goal_id IS NOT NULL;
 
 UPDATE movements
@@ -11,4 +11,7 @@ SET origin = 'NORMAL'
 WHERE origin IS NULL;
 
 ALTER TABLE movements
-MODIFY origin VARCHAR(10) NOT NULL;
+ALTER COLUMN origin SET DEFAULT 'NORMAL';
+
+ALTER TABLE movements
+ALTER COLUMN origin SET NOT NULL;
