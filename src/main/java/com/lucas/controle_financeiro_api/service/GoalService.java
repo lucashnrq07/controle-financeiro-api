@@ -63,7 +63,12 @@ public class GoalService {
             withdrawFromGoal(goalId, goal.getCurrentAmount(), user);
         }
 
-        movementRepository.detachGoal(goalId);
+        List<Movement> movements = movementRepository.findByGoalId(goalId);
+
+        for (Movement movement : movements) {
+            movement.setGoal(null);
+        }
+
         repository.delete(goal);
     }
 

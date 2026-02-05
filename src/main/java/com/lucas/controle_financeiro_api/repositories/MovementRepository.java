@@ -38,4 +38,6 @@ public interface MovementRepository extends JpaRepository<Movement, Long> {
     BigDecimal calculateBalance(Long userId);
 
     boolean existsByRecurringMovementIdAndDate(Long id, LocalDate today);
+
+    List<Movement> findByGoalId(Long goalId);
 }
