@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/categories")
-@Tag(name = "Category", description = "Gerenciamento de categorias financeiras")
+@Tag(name = "Categorias", description = "Gerenciamento de categorias financeiras")
 public class CategoryController {
 
     private final CategoryService categoryService;

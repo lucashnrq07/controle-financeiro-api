@@ -25,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/goals")
-@Tag(name = "Goals", description = "Operações relacionadas às metas financeiras do usuário")
+@Tag(name = "Metas", description = "Operações relacionadas às metas financeiras do usuário")
 public class GoalController {
 
     private final GoalService service;

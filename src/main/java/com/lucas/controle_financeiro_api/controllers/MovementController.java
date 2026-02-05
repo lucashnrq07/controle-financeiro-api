@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/movements")
-@Tag(name = "Movement", description = "Gerenciamento de movimentações financeiras")
+@Tag(name = "Movimentos", description = "Gerenciamento de movimentações financeiras")
 public class MovementController {
 
     private final MovementService movementService;
