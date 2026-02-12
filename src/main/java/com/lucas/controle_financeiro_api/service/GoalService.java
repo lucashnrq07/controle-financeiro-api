@@ -129,6 +129,7 @@ public class GoalService {
         mov.setUser(user);
         mov.setCategory(category);
         mov.setGoal(goal);
+        mov.setOrigin(MovementOrigin.GOAL);
 
         movementRepository.save(mov);
 
