@@ -1,116 +1,99 @@
-# Sistema de Controle Financeiro Pessoal
+# 💰 Sistema de Controle Financeiro – Backend API
 
-API REST desenvolvida em **Java com Spring Boot** para controle de receitas e despesas pessoais, com foco em **organização financeira**, **boas práticas de back-end**, **regras de negócio** e **qualidade de código**.
+API REST desenvolvida em **Java 21 com Spring Boot** para gerenciamento de finanças pessoais.
 
-O projeto simula um cenário real de mercado, permitindo o gerenciamento de usuários, categorias e movimentações financeiras, com validações, persistência de dados e testes automatizados.
-
----
-
-## Objetivo do Projeto
-
-* Consolidar conhecimentos em desenvolvimento back-end com Java e Spring Boot
-* Aplicar regras de negócio comuns a sistemas financeiros
-* Desenvolver uma API REST organizada, testável e escalável
-* Simular um projeto próximo da realidade profissional
+O sistema permite o controle de **usuários, categorias e movimentações financeiras (receitas e despesas)**, aplicando regras de negócio e boas práticas de arquitetura back-end.
 
 ---
 
-## Funcionalidades
+## 🌐 API em Produção
 
-* Cadastro de usuários
-* Cadastro de categorias (entrada e saída)
-* Registro de movimentações financeiras
-* Regras de negócio para receitas e despesas
-* Associação entre usuários, categorias e movimentações
-* Validação de dados de entrada
-* Tratamento de exceções
-* Documentação da API com Swagger
-* Testes unitários na camada de serviço
+A aplicação está publicada e pode ser acessada em:
+
+🔗 **Base URL:**  
+https://controle-financeiro-frontend-cz3j.onrender.com/
+
+📖 **Documentação Swagger:**  
+https://controle-financeiro-api-vqun.onrender.com/swagger-ui/index.html
 
 ---
 
-## Arquitetura
+## 🚀 Objetivo
 
-O projeto segue uma **arquitetura em camadas**, separando responsabilidades e facilitando manutenção e testes:
+Organizar e gerir a vida financeira dos usuários utilizando:
 
-* **Controller** – Exposição dos endpoints REST
-* **Service** – Regras de negócio e validações
-* **Repository** – Persistência de dados com JPA
-* **DTOs** – Transferência de dados entre camadas
-* **Entities** – Modelo de domínio
-* **Exceptions** – Exceções personalizadas
-* **Handler** – Tratamento global de erros
-
----
-
-## O que eu aprendi com este projeto
-
-### Modelagem de Domínio
-
-* Representação de usuários, categorias e movimentações financeiras
-* Relacionamentos entre entidades
-
-### Regras de Negócio
-
-* Diferença entre receitas e despesas
-* Validações financeiras e consistência dos dados
-
-### Arquitetura em Camadas
-
-* Separação clara de responsabilidades
-* Controllers enxutos e lógica concentrada no service
-
-### APIs REST
-
-* Criação de endpoints REST seguindo boas práticas
-* Uso correto dos métodos HTTP
-* Documentação com Swagger / SpringDoc
-
-### Tratamento de Exceções
-
-* Criação de exceções personalizadas
-* Tratamento global de erros com @RestControllerAdvice
-
-### Testes Unitários
-
-* Testes da camada de serviço
-* Uso de JUnit 5 e Mockito
-
-### Boas Práticas de Desenvolvimento
-
-* Código limpo e organizado
-* Versionamento com Git
-* Estrutura preparada para evolução do sistema
+- Arquitetura em camadas
+- Boas práticas de desenvolvimento
+- Separação de responsabilidades
+- Validações robustas
+- Testes automatizados
+- Documentação de API
+- Deploy em ambiente cloud
 
 ---
 
-## Tecnologias Utilizadas
+## 📌 Funcionalidades
 
-* Java 21
-* Spring Boot 4
-
-  * Spring Web
-  * Spring Data JPA
-  * Spring Validation
-* MySQL
-* Swagger / SpringDoc
-* JUnit 5
-* Mockito
-* Maven
-* Git e GitHub
+- Cadastro de usuários
+- Cadastro de categorias (RECEITA / DESPESA)
+- Registro de movimentações financeiras
+- Acompanhamento de metas pessoais
+- Movimentações automáticas mensais ou semanais
+- Associação entre usuário e categoria
+- Validação de dados com Bean Validation
+- Tratamento global de exceções com `@RestControllerAdvice`
+- Documentação automática com Swagger (SpringDoc)
+- Testes unitários na camada de serviço
 
 ---
 
-## Documentação da API
+## 🏗 Arquitetura
 
-A documentação da API é gerada automaticamente com **Swagger**.
+O projeto segue arquitetura em camadas:
 
-Após iniciar a aplicação, acesse:
+Controller → Service → Repository → Database
 
-```
-http://localhost:8080/swagger-ui.html
-```
+### Estrutura
+
+- **Controller** → Endpoints REST
+- **Service** → Regras de negócio
+- **Repository** → Persistência com JPA
+- **DTOs** → Comunicação entre camadas
+- **Entities** → Modelo de domínio
+- **Exception Handler** → Tratamento global de erros
 
 ---
 
-Projeto desenvolvido por **Lucas Henrique** 👨‍💻
+## ☁️ Deploy
+
+A aplicação está hospedada em:
+
+- Plataforma: Render
+- Banco de dados: PostgreSQL (prod), MySQL (local)
+
+---
+
+## 🛠 Tecnologias Utilizadas
+
+- Java 21
+- Spring Boot
+  - Spring Web
+  - Spring Data JPA
+  - Spring Security
+- MySQL
+- SpringDoc OpenAPI
+- JUnit 5
+- Mockito
+- Maven
+
+---
+
+## 🧪 Testes
+
+Os testes unitários estão concentrados na camada de serviço e validam as principais regras de negócio.
+
+---
+
+## 👨‍💻 Autor
+
+Desenvolvido por **Lucas Henrique**
